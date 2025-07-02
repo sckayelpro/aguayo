@@ -4,6 +4,7 @@ import { ReactNode } from 'react'
 import { getServerSession } from 'next-auth'
 import {authOptions} from './api/auth/[...nextauth]/authOptions'
 import SessionProvider from '../providers/session-provider'
+import AuthButton from '../components//auth/AuthButton'
 
 export const metadata = {
   title: 'Aguayo | Servicios entre personas',
@@ -19,9 +20,10 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
       <body className="bg-gray-50 text-gray-900">
         <SessionProvider session={session}>
           {/* Header global */}
-          <header className="w-full px-4 py-2 shadow bg-white">
-            <h1 className="text-xl font-bold text-blue-600">Aguayo</h1>
-          </header>
+          <header className="w-full px-4 py-2 shadow bg-white flex justify-between items-center">
+  <h1 className="text-xl font-bold text-blue-600">Aguayo</h1>
+  <AuthButton />
+</header>
 
           {/* Contenido dinámico según ruta */}
           <main className="p-4">{children}</main>

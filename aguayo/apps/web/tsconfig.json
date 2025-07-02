@@ -5,7 +5,12 @@
       {
         "name": "next"
       }
-    ]
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "types": ["next-auth"] // 👈 asegúrate de incluir esto
   },
   "include": [
     "**/*.ts",

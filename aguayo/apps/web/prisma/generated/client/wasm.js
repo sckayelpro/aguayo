@@ -122,9 +122,18 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
 
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
+  authUserId: 'authUserId',
+  role: 'role',
+  gallery: 'gallery',
   email: 'email',
-  name: 'name',
-  image: 'image',
+  fullName: 'fullName',
+  phoneNumber: 'phoneNumber',
+  profileImage: 'profileImage',
+  location: 'location',
+  bio: 'bio',
+  idFront: 'idFront',
+  idBack: 'idBack',
+  birthDate: 'birthDate',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -133,16 +142,21 @@ exports.Prisma.ServiceScalarFieldEnum = {
   id: 'id',
   title: 'title',
   description: 'description',
-  category: 'category',
   price: 'price',
+  category: 'category',
+  imageUrl: 'imageUrl',
+  location: 'location',
+  providerId: 'providerId',
+  requesterId: 'requesterId',
   createdAt: 'createdAt',
-  userId: 'userId'
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.BookingScalarFieldEnum = {
   id: 'id',
   serviceId: 'serviceId',
   userId: 'userId',
+  date: 'date',
   status: 'status',
   createdAt: 'createdAt'
 };
@@ -161,7 +175,10 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
-
+exports.Role = exports.$Enums.Role = {
+  CLIENT: 'CLIENT',
+  PROVIDER: 'PROVIDER'
+};
 
 exports.Prisma.ModelName = {
   User: 'User',
