@@ -8,7 +8,8 @@ const withPWA = require('next-pwa')({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  swcMinify: true
+  swcMinify: true,
+  transpilePackages: ["@repo/ui", "@repo/tailwind-config"],
 }
 
 module.exports = withPWA(nextConfig)

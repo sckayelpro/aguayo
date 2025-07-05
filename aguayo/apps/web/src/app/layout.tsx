@@ -1,10 +1,12 @@
 // apps/web/src/app/layout.tsx
-import '../styles/globals.css'
+import './global.css' // Asegúrate de importar tus estilos globales
 import { ReactNode } from 'react'
 import { getServerSession } from 'next-auth'
 import {authOptions} from './api/auth/[...nextauth]/authOptions'
 import SessionProvider from '../providers/session-provider'
-import AuthButton from '../components//auth/AuthButton'
+// import AuthButton from '../components/auth/AuthButton' // Ya no lo necesitas aquí directamente
+import UserNav from '@/layouts/UserNav' // <--- ¡Importa el nuevo componente!
+import Link from 'next/link'
 
 export const metadata = {
   title: 'Aguayo | Servicios entre personas',
@@ -21,12 +23,14 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         <SessionProvider session={session}>
           {/* Header global */}
           <header className="w-full px-4 py-2 shadow bg-white flex justify-between items-center">
-  <h1 className="text-xl font-bold text-blue-600">Aguayo</h1>
-  <AuthButton />
-</header>
+            <Link href="/" className="text-xl font-bold text-blue-600 hover:opacity-80 transition-opacity"> {/* ¡Añade Link para el logo/título! */}
+              Aguayo
+            </Link>
+            <UserNav /> {/* <--- ¡Usa el nuevo componente aquí! */}
+          </header>
 
           {/* Contenido dinámico según ruta */}
-          <main className="p-4">{children}</main>
+          <main className="p-4 flex-grow">{children}</main> {/* Añade flex-grow para que el footer baje */}
 
           {/* Footer global */}
           <footer className="mt-10 p-4 text-center text-sm text-gray-500">

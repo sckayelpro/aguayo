@@ -1,8 +1,15 @@
+// apps/web/src/app/auth/signup/personal/page.tsx
 'use client'
 
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/navigation'
+
+// Define un tipo para el servicio si no lo tienes ya
+type Service = {
+  id: string;
+  title: string;
+};
 
 type FormData = {
   fullName: string
@@ -10,12 +17,14 @@ type FormData = {
   phoneNumber: string
   location: string
   bio?: string
-  servicesOffered?: string[] // solo si es PROVIDER
+  servicesOffered?: string[] // Ahora contendrá IDs reales
 }
 
 export default function PersonalStep() {
   const router = useRouter()
   const [role, setRole] = useState<'PROVIDER' | 'CONSUMER' | null>(null)
+  const [availableServices, setAvailableServices] = useState<Service[]>([]) // Nuevo estado para los servicios
+  const [isLoadingServices, setIsLoadingServices] = useState(false);
 
   const {
     register,
@@ -27,13 +36,11 @@ export default function PersonalStep() {
   useEffect(() => {
     const storedRole = localStorage.getItem('signupRole') as 'PROVIDER' | 'CONSUMER' | null
     if (!storedRole) {
-      router.replace('/signup/role')
+      router.replace('/auth/signup/role')
       return
     }
-
     setRole(storedRole)
 
-    // Restaurar datos previos si existen
     const saved = localStorage.getItem('signupPersonal')
     if (saved) {
       try {
@@ -50,14 +57,35 @@ export default function PersonalStep() {
         console.error('Error parsing saved form data', e)
       }
     }
+
+    // Cargar servicios disponibles si el rol es PROVEEDOR
+    if (storedRole === 'PROVIDER') {
+      const fetchServices = async () => {
+        setIsLoadingServices(true);
+        try {
+          const res = await fetch('/api/services'); // Necesitas crear este endpoint si no lo tienes
+          if (!res.ok) {
+            throw new Error('Failed to fetch services');
+          }
+          const data: Service[] = await res.json();
+          setAvailableServices(data);
+        } catch (error) {
+          console.error('Error fetching services:', error);
+          // Podrías mostrar un error al usuario aquí
+        } finally {
+          setIsLoadingServices(false);
+        }
+      };
+      fetchServices();
+    }
   }, [router, setValue])
 
   const onSubmit = (data: FormData) => {
     localStorage.setItem('signupPersonal', JSON.stringify(data))
-    router.push('/signup/documents')
+    router.push('/auth/signup/documents')
   }
 
-  if (!role) return null // esperar a que se cargue el role
+  if (!role) return null
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="max-w-md mx-auto p-6 space-y-4">
@@ -106,25 +134,34 @@ export default function PersonalStep() {
       {role === 'PROVIDER' && (
         <>
           <div>
-            <label>Servicios que ofreces</label>
-            <select
-              multiple
-              {...register('servicesOffered')}
-              className="w-full border p-2 rounded"
-            >
-              <option value="cleaning">Limpieza</option>
-              <option value="gardening">Jardinería</option>
-              <option value="plumbing">Plomería</option>
-            </select>
-          </div>
-
-          <div>
             <label>Biografía (opcional)</label>
             <textarea
               {...register('bio')}
               className="w-full border p-2 rounded"
               rows={3}
             />
+          </div>
+          <div>
+            <label>Servicios que ofreces</label>
+            {isLoadingServices ? (
+              <p>Cargando servicios...</p>
+            ) : availableServices.length === 0 ? (
+              <p className="text-red-500">No hay servicios disponibles. Contacta al administrador.</p>
+            ) : (
+              <select
+                multiple
+                {...register('servicesOffered')}
+                className="w-full border p-2 rounded"
+                // Puedes ajustar el tamaño para que muestre más opciones
+                size={Math.min(availableServices.length, 5)}
+              >
+                {availableServices.map(service => (
+                  <option key={service.id} value={service.id}>
+                    {service.title}
+                  </option>
+                ))}
+              </select>
+            )}
           </div>
         </>
       )}

@@ -1,72 +1,170 @@
 // apps/web/src/app/profile/page.tsx
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions'
-import { prisma } from '@/lib/prisma'
-import Image from 'next/image'
-import { redirect } from 'next/navigation'
+'use client';
 
-export default async function ProfilePage() {
-  const session = await getServerSession(authOptions)
+import { useEffect, useState } from 'react';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import type { Profile, Role, Service } from 'prisma/generated/client';
+import Link from 'next/link';
 
-  if (!session?.user?.id) {
-    redirect('/login')
+type ProfileWithServices = Profile & {
+  servicesOffered?: Service[];
+};
+
+// Define la URL base de Supabase Storage para no repetirla
+const SUPABASE_STORAGE_BASE_URL = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/profiles`;
+
+export default function ProfilePage() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const [profile, setProfile] = useState<ProfileWithServices | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (status === 'loading') return;
+
+    if (!session || !session.user?.id) {
+      router.replace('/auth/login');
+      return;
+    }
+
+    const fetchProfile = async () => {
+      try {
+        const res = await fetch(`/api/profile/${session.user.id}`);
+        if (!res.ok) {
+          const errorData = await res.json();
+          throw new Error(errorData.error || 'Failed to fetch profile');
+        }
+        const data: ProfileWithServices = await res.json();
+        setProfile(data);
+      } catch (err: any) {
+        console.error('Error fetching profile:', err);
+        setError(err.message || 'Error al cargar el perfil.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, [session, status, router]);
+
+  if (loading) {
+    return <div className="flex justify-center items-center h-screen">Cargando perfil...</div>;
   }
 
-const user = await prisma.user.findUnique({
-  where: { authUserId: session.user.id },
-  include: {
-    servicesOffered: true, // ← incluir relación con servicios ofrecidos
-  },
-})
+  if (error) {
+    return (
+      <div className="flex justify-center items-center h-screen text-red-500">
+        <p>{error}</p>
+      </div>
+    );
+  }
 
-
-  if (!user) {
-    redirect('/profile/create')
+  if (!profile) {
+    return (
+      <div className="flex flex-col justify-center items-center h-screen">
+        <p>No se encontró el perfil.</p>
+        <Link href="/auth/signup/personal" className="text-blue-500 hover:underline mt-4">
+          Completar mi perfil ahora
+        </Link>
+      </div>
+    );
   }
 
   return (
-    <div className="max-w-3xl mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Mi perfil</h1>
+    <div className="max-w-3xl mx-auto p-6 bg-white shadow-lg rounded-lg mt-8">
+      <h1 className="text-3xl font-bold mb-6 text-gray-800">Mi Perfil</h1>
 
-      {/* Imagen de perfil */}
-      {user.profileImage && (
-        <Image
-          src={`https://<your-project-ref>.supabase.co/storage/v1/object/public/profiles/${user.profileImage}`}
-          alt="Foto de perfil"
-          width={120}
-          height={120}
-          className="rounded-full mb-4 object-cover"
-        />
-      )}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {profile.profileImage && (
+          <div className="flex justify-center md:col-span-2">
+            <img
+              // Usando la variable de entorno
+              src={`${SUPABASE_STORAGE_BASE_URL}/${profile.profileImage}`}
+              alt="Foto de perfil"
+              className="w-48 h-48 rounded-full object-cover border-4 border-green-500 shadow-md"
+            />
+          </div>
+        )}
 
-      <div className="space-y-2">
-        <p><strong>Nombre:</strong> {user.fullName}</p>
-        <p><strong>Celular:</strong> {user.phoneNumber}</p>
-        <p><strong>Ubicación:</strong> {user.location}</p>
-        <p><strong>Biografía:</strong> {user.bio || 'No definida'}</p>
-        <p><strong>Fecha de nacimiento:</strong> {user.birthDate?.toLocaleDateString()}</p>
-        <p><strong>Rol:</strong> {user.role}</p>
-        <p><strong>Servicios ofrecidos:</strong> {(user.servicesOffered as any)?.join(', ')}</p>
+        <div className="info-item">
+          <p className="text-sm font-semibold text-gray-600">Nombre Completo:</p>
+          <p className="text-lg text-gray-900">{profile.fullName}</p>
+        </div>
+        {/* ... (resto de los campos del perfil) ... */}
+        {profile.bio && (
+          <div className="md:col-span-2 info-item">
+            <p className="text-sm font-semibold text-gray-600">Biografía:</p>
+            <p className="text-lg text-gray-900 leading-relaxed">{profile.bio}</p>
+          </div>
+        )}
+
+        {profile.role === 'PROVIDER' && (
+          <>
+            {profile.idFront && profile.idBack && (
+              <div className="md:col-span-2">
+                <p className="text-sm font-semibold text-gray-600 mb-2">Documentos de Identidad:</p>
+                <div className="flex space-x-4 justify-center">
+                  <a
+                    // Usando la variable de entorno
+                    href={`${SUPABASE_STORAGE_BASE_URL}/${profile.idFront}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-500 hover:underline"
+                  >
+                    Ver Anverso
+                  </a>
+                  <a
+                    // Usando la variable de entorno
+                    href={`${SUPABASE_STORAGE_BASE_URL}/${profile.idBack}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-500 hover:underline"
+                  >
+                    Ver Reverso
+                  </a>
+                </div>
+              </div>
+            )}
+            {profile.servicesOffered && profile.servicesOffered.length > 0 && (
+              <div className="md:col-span-2 info-item">
+                <p className="text-sm font-semibold text-gray-600">Servicios Ofrecidos:</p>
+                <ul className="list-disc list-inside text-lg text-gray-900">
+                  {profile.servicesOffered.map((service) => (
+                    <li key={service.id}>{service.title}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {profile.gallery && profile.gallery.length > 0 && (
+              <div className="md:col-span-2 info-item">
+                <p className="text-sm font-semibold text-gray-600 mb-2">Galería de Trabajos:</p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                  {profile.gallery.map((imageKey, index) => (
+                    <img
+                      key={index}
+                      // Usando la variable de entorno
+                      src={`${SUPABASE_STORAGE_BASE_URL}/${imageKey}`}
+                      alt={`Galería ${index + 1}`}
+                      className="w-full h-32 object-cover rounded-md shadow-sm"
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+          </>
+        )}
       </div>
 
-      {/* Galería */}
-      {user.gallery?.length > 0 && (
-        <div className="mt-6">
-          <h2 className="text-lg font-semibold mb-2">Galería</h2>
-          <div className="grid grid-cols-2 gap-4">
-            {user.gallery.map((key, index) => (
-              <Image
-                key={index}
-                src={`https://zzyyfqtwxwlsfownjbfx.supabase.co/storage/v1/object/public/profiles/${key}`}
-                alt={`Foto ${index + 1}`}
-                width={300}
-                height={200}
-                className="rounded shadow object-cover"
-              />
-            ))}
-          </div>
-        </div>
-      )}
+      <div className="mt-8 text-center">
+        <Link
+          href="/profile/edit"
+          className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors shadow-md"
+        >
+          Editar Perfil
+        </Link>
+      </div>
     </div>
-  )
+  );
 }

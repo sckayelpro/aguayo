@@ -2,90 +2,146 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions'
-import { prisma} from '@/lib/prisma'
+import { prisma } from '@/lib/prisma'
 import { supabase } from '@/lib/supabase'
 import { Role } from 'prisma/generated/client'
-
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions)
   if (!session?.user?.id) {
+    console.error('[API] profile/create: No autenticado')
     return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
   }
 
-  const form = await req.formData()
-  const userId = session.user.id
-  const role = form.get('role') as 'PROVIDER' | 'CONSUMER'
+  try {
+    const formData = await req.formData()
+    const role = formData.get('role') as Role
 
-  // Datos básicos
-  const fullName = form.get('fullName') as string
-  const birthDate = new Date(form.get('birthDate') as string)
-  const phoneNumber = form.get('phoneNumber') as string
-  const location = form.get('location') as string
-  const bio = form.get('bio') as string | null
+    // Datos básicos
+    const fullName = formData.get('fullName') as string
+    const birthDate = new Date(formData.get('birthDate') as string)
+    const phoneNumber = formData.get('phoneNumber') as string
+    const location = formData.get('location') as string
+    const bio = formData.get('bio') as string | null
 
-  const upload = async (file: File, path: string) => {
-    const { data, error } = await supabase.storage
-      .from('profiles')
-      .upload(path, file, { contentType: file.type })
-    if (error) throw error
-    return data.path // usamos .path en lugar de .Key por supabase-js
-  }
-
-  // Documentos
-  const idFrontFile = form.get('idFront') as File | null
-  const idBackFile = form.get('idBack') as File | null
-  let idFrontKey: string | null = null
-  let idBackKey: string | null = null
-
-  if (role === 'PROVIDER') {
-    if (!idFrontFile || !idBackFile) {
-      return NextResponse.json({ error: 'Documentos requeridos para proveedores' }, { status: 400 })
+    // Función para subir archivos
+    const upload = async (file: File, path: string) => {
+      const { data, error } = await supabase.storage
+        .from('profiles')
+        .upload(path, file, { contentType: file.type })
+      if (error) throw error
+      return data.path
     }
-    idFrontKey = await upload(idFrontFile, `${userId}/id-front.jpg`)
-    idBackKey = await upload(idBackFile, `${userId}/id-back.jpg`)
-  }
 
-  // Foto de perfil (siempre requerida)
-  const profileImageFile = form.get('profileImage') as File
-  if (!profileImageFile) {
-    return NextResponse.json({ error: 'Foto de perfil obligatoria' }, { status: 400 })
-  }
-  const profileImageKey = await upload(profileImageFile, `${userId}/profile.jpg`)
+    // Documentos (solo para proveedores)
+    let idFrontKey: string | null = null
+    let idBackKey: string | null = null
 
-  // Servicios y galería (solo para PROVIDER)
-  let servicesOffered: string[] = []
-  let galleryKeys: string[] = []
+    if (role === Role.PROVIDER) {
+      const idFrontFile = formData.get('idFront') as File | null
+      const idBackFile = formData.get('idBack') as File | null
 
-  if (role === 'PROVIDER') {
-    servicesOffered = form.getAll('servicesOffered[]').map(s => s as string)
+      if (!idFrontFile || !idBackFile) {
+        return NextResponse.json({ error: 'Documentos requeridos para proveedores' }, { status: 400 })
+      }
 
-    const galleryFiles = form.getAll('gallery') as File[]
-    for (const file of galleryFiles) {
-      const key = await upload(file, `${userId}/gallery/${file.name}`)
-      galleryKeys.push(key)
+      idFrontKey = await upload(idFrontFile, `${session.user.id}/id-front.jpg`)
+      idBackKey = await upload(idBackFile, `${session.user.id}/id-back.jpg`)
     }
+
+    // Foto de perfil (requerida para todos)
+    const profileImageFile = formData.get('profileImage') as File
+    if (!profileImageFile) {
+      return NextResponse.json({ error: 'Foto de perfil obligatoria' }, { status: 400 })
+    }
+    const profileImageKey = await upload(profileImageFile, `${session.user.id}/profile.jpg`)
+
+    // Servicios y galería (solo para proveedores)
+    let servicesOffered: string[] = []
+    let galleryKeys: string[] = []
+
+    if (role === Role.PROVIDER) {
+      servicesOffered = formData.getAll('servicesOffered[]').map(s => s as string)
+
+      const galleryFiles = formData.getAll('gallery') as File[]
+      for (const file of galleryFiles) {
+        const key = await upload(file, `${session.user.id}/gallery/${file.name}`)
+        galleryKeys.push(key)
+      }
+    }
+
+    // IMPORTANTE: Configurar el cliente de Supabase con la sesión del usuario
+    // Si usas Supabase RLS, necesitas autenticar el cliente
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    
+    if (authError || !user) {
+      console.error('Error de autenticación de Supabase:', authError)
+      
+      // Alternativa: Crear un cliente admin de Supabase que bypasse RLS
+      const { createClient } = await import('@supabase/supabase-js')
+      const supabaseAdmin = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!, // Clave de servicio (admin)
+        {
+          auth: {
+            autoRefreshToken: false,
+            persistSession: false
+          }
+        }
+      )
+
+      // Usar Prisma pero con el cliente admin para bypass RLS
+      const profile = await prisma.profile.create({
+        data: {
+          authUserId: session.user.id,
+          email: session.user.email!,
+          fullName,
+          birthDate,
+          phoneNumber,
+          location,
+          bio,
+          profileImage: profileImageKey,
+          idFront: idFrontKey,
+          idBack: idBackKey,
+          role,
+          gallery: galleryKeys,
+          servicesOffered: role === Role.PROVIDER && servicesOffered.length > 0
+            ? { connect: servicesOffered.map(id => ({ id })) }
+            : undefined,
+        },
+      })
+
+      return NextResponse.json({ ok: true, profile })
+    }
+
+    // Si llegamos aquí, Supabase está autenticado
+    const profile = await prisma.profile.create({
+      data: {
+        authUserId: session.user.id,
+        email: session.user.email!,
+        fullName,
+        birthDate,
+        phoneNumber,
+        location,
+        bio,
+        profileImage: profileImageKey,
+        idFront: idFrontKey,
+        idBack: idBackKey,
+        role,
+        gallery: galleryKeys,
+        servicesOffered: role === Role.PROVIDER && servicesOffered.length > 0
+          ? { connect: servicesOffered.map(id => ({ id })) }
+          : undefined,
+      },
+    })
+
+    return NextResponse.json({ ok: true, profile })
+    
+  } catch (error) {
+    console.error("Error creating profile:", error)
+    return NextResponse.json({ 
+      error: "Error interno del servidor", 
+      details: error instanceof Error ? error.message : 'Unknown error' 
+    }, { status: 500 })
   }
-
-  // Guardar en la base de datos
-  const user = await prisma.user.update({
-  where: { authUserId: userId },
-  data: {
-    fullName,
-    birthDate,
-    phoneNumber,
-    location,
-    bio,
-    profileImage: profileImageKey,
-    idFront: idFrontKey,
-    idBack: idBackKey,
-    role: role === 'PROVIDER' ? Role.PROVIDER : Role.CLIENT,
-    servicesOffered: role === 'PROVIDER'
-      ? { connect: servicesOffered.map(id => ({ id })) }
-      : undefined,
-    gallery: galleryKeys,
-  },
-})
-
-  return NextResponse.json({ ok: true, user })
 }

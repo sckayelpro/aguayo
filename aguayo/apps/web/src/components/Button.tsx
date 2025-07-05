@@ -1,3 +1,4 @@
+// apps/web/src/components/Button.tsx
 <button
   onClick={() =>
     signIn('google', {
