@@ -6,9 +6,9 @@ import { usePathname } from 'next/navigation';
 
 const navItems = [
   { href: '/', icon: <Home className="h-6 w-6" />, label: 'Inicio' },
-  { href: '/descubre', icon: <LayoutGrid className="h-6 w-6" />, label: 'Descubre' },
-  { href: '/mi-biblioteca', icon: <LibraryBig className="h-6 w-6" />, label: 'Mi biblioteca' },
-  { href: '/perfil', icon: <User className="h-6 w-6" />, label: 'Perfil' },
+  { href: '/discover', icon: <LayoutGrid className="h-6 w-6" />, label: 'Descubre' },
+  { href: '/my-services', icon: <LibraryBig className="h-6 w-6" />, label: 'Mi biblioteca' },
+  { href: '/profile', icon: <User className="h-6 w-6" />, label: 'Perfil' },
 ];
 
 export function BottomNav() {
