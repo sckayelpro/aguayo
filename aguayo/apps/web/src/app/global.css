@@ -1,9 +1,0 @@
-@import "@repo/tailwind-config";
-
-/* Estilos base adicionales */
-html {
-  scroll-behavior: smooth;
-}
-
-/* El font-family ya está definido en shared-styles.css, 
-   pero puedes sobreescribirlo aquí si necesitas algo específico para esta app */
