@@ -1,7 +1,0 @@
-// apps/web/postcss.config.mjs
-export default {
-  plugins: {
-    "@tailwindcss/postcss": {}, // El plugin oficial para Tailwind v4
-    "autoprefixer": {}, // Para añadir prefijos de navegador
-  },
-};

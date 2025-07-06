@@ -1,43 +1,29 @@
-/* aguayo/packages/tailwind-config/shared-styles.css */
+@import "tailwindcss";
 
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
-
-/* Definición de tokens usando @theme en Tailwind CSS v4 */
 @theme {
-  --color-primary: #00ffff;           /* Cian (como tu #00ffff) */
-  --color-primary-dark: oklch(0.45 0.12 230);   /* Azul oscuro */
-  --color-accent: oklch(0.82 0.09 210);        /* Azul claro */
-  --color-info: oklch(0.9 0.04 220);           /* Celeste informativo */
-  --color-warning: oklch(0.85 0.09 80);         /* Amarillo pastel */
-  --color-danger: oklch(0.72 0.11 25);         /* Rojo tierra */
+  --color-primary: #00ffff;
+  --color-primary-dark: oklch(0.45 0.12 230);
+  --color-accent: oklch(0.82 0.09 210);
+  --color-info: oklch(0.9 0.04 220);
+  --color-warning: oklch(0.85 0.09 80);
+  --color-danger: oklch(0.72 0.11 25);
 
-  --color-bg-light: oklch(0.98 0.005 270);      /* Fondo claro */
-  --color-surface: oklch(1 0 0);               /* Blanco puro */
-  --color-surface-2: oklch(0.9 0.03 20);        /* Rosado claro */
-  --color-neutral-500: oklch(0.6 0.01 260);     /* Gris medio */
+  --color-bg-light: oklch(0.98 0.005 270);
+  --color-surface: oklch(1 0 0);
+  --color-surface-2: oklch(0.9 0.03 20);
+  --color-neutral-500: oklch(0.6 0.01 260);
 
   --radius-xl: 1rem;
   --radius-2xl: 1.5rem;
 
-  --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.05);
+  /* Para sombras necesitas usar un approach diferente en v4 */
+  --shadow-card: 0 4px 12px rgb(0 0 0 / 0.05);
+}
 
-  --font-sans: Inter, system-ui, -apple-system, BlinkMacSystemFont,
+/* Estilos globales adicionales */
+body {
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont,
                "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans",
                sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
                "Segoe UI Symbol", "Noto Color Emoji";
-}
-
-/* Variables CSS para acceso manual desde estilos (opcional, pero útil para temas) */
-:root {
-  --background: var(--color-bg-light);
-  --foreground: var(--color-neutral-500);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: var(--color-neutral-500);
-    --foreground: var(--color-surface);
-  }
 }

@@ -2,6 +2,23 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "./base.json",
   "compilerOptions": {
-    "jsx": "react-jsx"
-  }
+    "jsx": "react-jsx",
+    "declaration": true,
+    "declarationMap": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "moduleResolution": "node",
+    "preserveWatchOutput": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "allowJs": true,
+    "checkJs": false,
+    "incremental": false,
+    "noEmit": false,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true
+  },
+  "include": [],
+  "exclude": ["dist", "build", "node_modules"]
 }

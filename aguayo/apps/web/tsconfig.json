@@ -8,17 +8,22 @@
     ],
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": [
+        "src/*"
+      ],
+      "@repo/ui": ["../../packages/ui"]
     },
-    "types": ["next-auth"] // 👈 asegúrate de incluir esto
+    "types": [
+      "next-auth"
+    ],
+    "strictNullChecks": true
   },
   "include": [
     "**/*.ts",
     "**/*.tsx",
     "next-env.d.ts",
     "next.config.js",
-    ".next/types/**/*.ts"
-, "postcss.config.msj"  ],
+    ".next/types/**/*.ts"  ],
   "exclude": [
     "node_modules"
   ]

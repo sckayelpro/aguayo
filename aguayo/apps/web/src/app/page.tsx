@@ -28,7 +28,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-bg-light px-4">
       <h1 className="text-4xl font-bold text-primary mb-6">Bienvenido a Aguayo </h1>
-      <p className="text-lg text-primary mb-8 text-center max-w-md">
+      <p className="text-lg text-neutral-400 mb-8 text-center max-w-md">
         Encuentra personas de confianza para realizar servicios como limpieza, jardinería,
         cuidado de personas y más.
       </p>
@@ -43,8 +43,7 @@ export default function HomePage() {
           Ir al Dashboard
         </button>
       )}
-
-      <p className="mt-10 text-sm text-neutral-500">© 2025 Aguayo. Todos los derechos reservados.</p>
+  
     </div>
   )
 }

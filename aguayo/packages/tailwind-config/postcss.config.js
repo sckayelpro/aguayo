@@ -1,8 +1,6 @@
-// aguayo/packages/tailwind-config/postcss.config.js
-/** @type {import('postcss').AcceptedPlugin} */
-import tailwindcss from 'tailwindcss';
-import autoprefixer from 'autoprefixer';
-
-export default {
-  plugins: [tailwindcss(), autoprefixer()],
+// Optional PostCSS configuration for applications that need it
+export const postcssConfig = {
+  plugins: {
+    "@tailwindcss/postcss": {},
+  },
 };
