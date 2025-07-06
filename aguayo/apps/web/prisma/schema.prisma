@@ -1,3 +1,5 @@
+// prisma/schema.prisma
+
 generator client {
   provider = "prisma-client-js"
   output   = "./generated/client"
@@ -9,6 +11,7 @@ datasource db {
 }
 
 // ===== MODELOS DE NEXTAUTH CON NOMBRES DE TABLAS ESTÁNDAR =====
+// Estos modelos no necesitan cambios
 model Account {
   id                String  @id @default(cuid())
   userId            String  @map("user_id")
@@ -25,7 +28,7 @@ model Account {
   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
-  @@map("nextauth_accounts") // Nombre estándar para NextAuth
+  @@map("nextauth_accounts")
 }
 
 model Session {
@@ -35,7 +38,7 @@ model Session {
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@map("nextauth_sessions") // Nombre estándar para NextAuth
+  @@map("nextauth_sessions")
 }
 
 model User {
@@ -46,9 +49,9 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
-  profile       Profile?  // Relación opcional a Profile
+  profile       Profile? // Relación opcional a Profile
 
-  @@map("nextauth_users") // Nombre estándar para NextAuth
+  @@map("nextauth_users")
 }
 
 model VerificationToken {
@@ -57,77 +60,107 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
-  @@map("nextauth_verification_tokens") // Nombre estándar para NextAuth
+  @@map("nextauth_verification_tokens")
 }
 
 // ===== MODELOS DE APLICACIÓN =====
 model Profile {
-  id           String    @id @default(cuid())
-  authUserId   String    @unique
-  user         User      @relation(fields: [authUserId], references: [id])
-  email        String    @unique
-  role         Role      @default(CLIENT)
-  fullName     String?
-  phoneNumber  String?
-  profileImage String?
-  location     String?
-  bio          String?
-  idFront      String?
-  idBack       String?
-  birthDate    DateTime?
-  gallery      String[]
-  createdAt    DateTime  @default(now()) @map("created_at")
-  updatedAt    DateTime  @updatedAt @map("updated_at")
+  id               String    @id @default(cuid())
+  authUserId       String    @unique
+  user             User      @relation(fields: [authUserId], references: [id])
+  email            String    @unique
+  role             Role      @default(CLIENT)
+  fullName         String?
+  phoneNumber      String?
+  profileImage     String?
+  location         String?
+  bio              String?
+  idFront          String?
+  idBack           String?
+  birthDate        DateTime?
+  gallery          String[] // Asumo que son claves de Supabase Storage
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
 
-  // Relaciones con servicios
-  servicesOffered   Service[] @relation("services_offered")
-  servicesRequested Service[] @relation("services_requested")
+  // Relaciones con los TIPOS de servicios (categorías) que este perfil OFRECE
+  servicesOffered  Service[] @relation("ProfileServicesOffered")
 
-  // Relación con bookings
-  bookings          Booking[]
+  // Relación con los bookings donde este perfil es el SOLICITANTE
+  bookings         Booking[] @relation("BookingsMade")
+
+  // Relación con las PUBLICACIONES que este perfil ha creado (si es PROVEEDOR)
+  publications     Publication[]
 
   @@map("profiles")
 }
 
 model Service {
-  id          String   @id @default(cuid())
-  title       String
-  description String
-  price       Float? // <--- ¡Cámbialo a Float? (ahora es opcional)
-  category    String
-  imageUrl    String?
-  location    String?
+  id          String        @id @default(cuid())
+  title       String        @unique // El nombre del servicio (e.g., "Limpieza", "Jardinería")
+  description String?       // Descripción general del tipo de servicio
 
-   // Proveedor (Profile)
-  providerId  String? // <--- ¡Cámbialo a String?
-  provider    Profile? @relation("services_offered", fields: [providerId], references: [id]) // <--- ¡Y también la relación!
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
 
-  // Cliente (Profile)
-  requesterId String? // <--- ¡Cámbialo a String?
-  requester   Profile? @relation("services_requested", fields: [requesterId], references: [id]) // <--- ¡Y también la relación!
+  // RELACIONES CORRECTAS:
+  // Qué perfiles ofrecen este TIPO de servicio
+  profilesOffering Profile[] @relation("ProfileServicesOffered")
 
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-
-  // Relación con bookings
-  bookings    Booking[]
+  // Qué publicaciones están asociadas con este TIPO de servicio
+  publications     Publication[] // Un tipo de servicio puede estar en muchas publicaciones
 }
 
+// ===== NUEVO MODELO PARA LAS PUBLICACIONES (ANUNCIOS) =====
+model Publication {
+  id           String     @id @default(cuid())
+  title        String     // Título del anuncio específico
+  description  String     // Descripción detallada del anuncio
+  price        Decimal?   // Precio numérico (opcional para "A Convenir")
+  priceType    PriceType  // <-- CAMBIO: Usamos el Enum PriceType
+  images       String[]   // Array de URLs/claves de imágenes de la publicación
+  isActive     Boolean    @default(true) // Si la publicación está activa o no
+  isDeleted    Boolean    @default(false) // <-- NUEVO: Para soft delete
+
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  // Relación con el PROVEEDOR que creó la publicación
+  providerId   String
+  provider     Profile    @relation(fields: [providerId], references: [id], onDelete: Cascade)
+
+  // Relación con el TIPO DE SERVICIO al que pertenece esta publicación
+  serviceId    String
+  service      Service    @relation(fields: [serviceId], references: [id])
+
+  bookings     Booking[] // Una publicación puede tener muchos bookings
+}
+
+// ===== MODELO BOOKING (para solicitudes) =====
 model Booking {
-  id        String   @id @default(cuid())
-  serviceId String
-  service   Service  @relation(fields: [serviceId], references: [id])
-  
-  userId    String
-  user      Profile  @relation(fields: [userId], references: [id])
+  id            String      @id @default(cuid())
+  // Relación con la publicación específica que se está reservando
+  publicationId String?
+  publication   Publication? @relation(fields: [publicationId], references: [id])
 
-  date      DateTime
-  status    String   // Ej: pending, confirmed, canceled
+  // userId aquí es el ID del Profile que HACE LA SOLICITUD (el cliente)
+  clientId      String
+  client        Profile     @relation("BookingsMade", fields: [clientId], references: [id])
 
-  createdAt DateTime @default(now())
+  date          DateTime    // Fecha/hora de la reserva
+  status        String      // Ej: "pending", "confirmed", "canceled", "completed"
+
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
 }
 
 enum Role {
   CLIENT
   PROVIDER
+}
+
+enum PriceType { // <-- NUEVO ENUM
+  FIXED
+  HOURLY
+  DAILY
+  NEGOTIABLE
 }

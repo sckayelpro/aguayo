@@ -1,17 +1,13 @@
 // apps/web/src/app/layout.tsx
-import './global.css' // Asegúrate de importar tus estilos globales
+import './glow'
 import { ReactNode } from 'react'
 import { getServerSession } from 'next-auth'
-import {authOptions} from './api/auth/[...nextauth]/authOptions'
+import { authOptions } from './api/auth/[...nextauth]/authOptions'
 import SessionProvider from '../providers/session-provider'
-// import AuthButton from '../components/auth/AuthButton' // Ya no lo necesitas aquí directamente
-import UserNav from '@/layouts/UserNav' // <--- ¡Importa el nuevo componente!
+import UserNav from '@/layouts/UserNav'
 import Link from 'next/link'
 
-export const metadata = {
-  title: 'Aguayo | Servicios entre personas',
-  description: 'Plataforma boliviana para ofrecer y contratar servicios físicos C2C.',
-}
+export const metadata = { /* ... */ }
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
   const session = await getServerSession(authOptions)
@@ -19,21 +15,23 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   return (
     <html lang="es">
       <head />
-      <body className="bg-gray-50 text-gray-900">
+      <body className="flex flex-col min-h-screen bg-bg-light text-neutral-500">
         <SessionProvider session={session}>
-          {/* Header global */}
-          <header className="w-full px-4 py-2 shadow bg-white flex justify-between items-center">
-            <Link href="/" className="text-xl font-bold text-blue-600 hover:opacity-80 transition-opacity"> {/* ¡Añade Link para el logo/título! */}
+          <header className="w-full px-4 py-2 shadow-card bg-surface flex justify-between items-center">
+            <Link
+              href="/"
+              className="text-xl font-bold text-primary hover:text-primary-dark transition"
+            >
               Aguayo
             </Link>
-            <UserNav /> {/* <--- ¡Usa el nuevo componente aquí! */}
+            <UserNav />
           </header>
 
-          {/* Contenido dinámico según ruta */}
-          <main className="p-4 flex-grow">{children}</main> {/* Añade flex-grow para que el footer baje */}
+          <main className="flex-grow p-4">
+            {children}
+          </main>
 
-          {/* Footer global */}
-          <footer className="mt-10 p-4 text-center text-sm text-gray-500">
+          <footer className="mt-auto p-4 text-center text-sm text-neutral-400 bg-surface">
             © {new Date().getFullYear()} Aguayo. Todos los derechos reservados.
           </footer>
         </SessionProvider>

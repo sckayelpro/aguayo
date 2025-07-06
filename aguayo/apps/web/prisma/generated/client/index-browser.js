@@ -178,23 +178,33 @@ exports.Prisma.ServiceScalarFieldEnum = {
   id: 'id',
   title: 'title',
   description: 'description',
-  price: 'price',
-  category: 'category',
-  imageUrl: 'imageUrl',
-  location: 'location',
-  providerId: 'providerId',
-  requesterId: 'requesterId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.PublicationScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  description: 'description',
+  price: 'price',
+  priceType: 'priceType',
+  images: 'images',
+  isActive: 'isActive',
+  isDeleted: 'isDeleted',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  providerId: 'providerId',
+  serviceId: 'serviceId'
+};
+
 exports.Prisma.BookingScalarFieldEnum = {
   id: 'id',
-  serviceId: 'serviceId',
-  userId: 'userId',
+  publicationId: 'publicationId',
+  clientId: 'clientId',
   date: 'date',
   status: 'status',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -216,6 +226,13 @@ exports.Role = exports.$Enums.Role = {
   PROVIDER: 'PROVIDER'
 };
 
+exports.PriceType = exports.$Enums.PriceType = {
+  FIXED: 'FIXED',
+  HOURLY: 'HOURLY',
+  DAILY: 'DAILY',
+  NEGOTIABLE: 'NEGOTIABLE'
+};
+
 exports.Prisma.ModelName = {
   Account: 'Account',
   Session: 'Session',
@@ -223,6 +240,7 @@ exports.Prisma.ModelName = {
   VerificationToken: 'VerificationToken',
   Profile: 'Profile',
   Service: 'Service',
+  Publication: 'Publication',
   Booking: 'Booking'
 };
 

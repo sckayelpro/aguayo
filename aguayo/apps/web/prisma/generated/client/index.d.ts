@@ -44,6 +44,11 @@ export type Profile = $Result.DefaultSelection<Prisma.$ProfilePayload>
  */
 export type Service = $Result.DefaultSelection<Prisma.$ServicePayload>
 /**
+ * Model Publication
+ * 
+ */
+export type Publication = $Result.DefaultSelection<Prisma.$PublicationPayload>
+/**
  * Model Booking
  * 
  */
@@ -60,11 +65,25 @@ export namespace $Enums {
 
 export type Role = (typeof Role)[keyof typeof Role]
 
+
+export const PriceType: {
+  FIXED: 'FIXED',
+  HOURLY: 'HOURLY',
+  DAILY: 'DAILY',
+  NEGOTIABLE: 'NEGOTIABLE'
+};
+
+export type PriceType = (typeof PriceType)[keyof typeof PriceType]
+
 }
 
 export type Role = $Enums.Role
 
 export const Role: typeof $Enums.Role
+
+export type PriceType = $Enums.PriceType
+
+export const PriceType: typeof $Enums.PriceType
 
 /**
  * ##  Prisma Client ʲˢ
@@ -250,6 +269,16 @@ export class PrismaClient<
     * ```
     */
   get service(): Prisma.ServiceDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.publication`: Exposes CRUD operations for the **Publication** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Publications
+    * const publications = await prisma.publication.findMany()
+    * ```
+    */
+  get publication(): Prisma.PublicationDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.booking`: Exposes CRUD operations for the **Booking** model.
@@ -706,6 +735,7 @@ export namespace Prisma {
     VerificationToken: 'VerificationToken',
     Profile: 'Profile',
     Service: 'Service',
+    Publication: 'Publication',
     Booking: 'Booking'
   };
 
@@ -725,7 +755,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "account" | "session" | "user" | "verificationToken" | "profile" | "service" | "booking"
+      modelProps: "account" | "session" | "user" | "verificationToken" | "profile" | "service" | "publication" | "booking"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1173,6 +1203,80 @@ export namespace Prisma {
           }
         }
       }
+      Publication: {
+        payload: Prisma.$PublicationPayload<ExtArgs>
+        fields: Prisma.PublicationFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.PublicationFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PublicationPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.PublicationFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PublicationPayload>
+          }
+          findFirst: {
+            args: Prisma.PublicationFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PublicationPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.PublicationFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PublicationPayload>
+          }
+          findMany: {
+            args: Prisma.PublicationFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PublicationPayload>[]
+          }
+          create: {
+            args: Prisma.PublicationCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PublicationPayload>
+          }
+          createMany: {
+            args: Prisma.PublicationCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.PublicationCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PublicationPayload>[]
+          }
+          delete: {
+            args: Prisma.PublicationDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PublicationPayload>
+          }
+          update: {
+            args: Prisma.PublicationUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PublicationPayload>
+          }
+          deleteMany: {
+            args: Prisma.PublicationDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.PublicationUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.PublicationUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PublicationPayload>[]
+          }
+          upsert: {
+            args: Prisma.PublicationUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PublicationPayload>
+          }
+          aggregate: {
+            args: Prisma.PublicationAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregatePublication>
+          }
+          groupBy: {
+            args: Prisma.PublicationGroupByArgs<ExtArgs>
+            result: $Utils.Optional<PublicationGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.PublicationCountArgs<ExtArgs>
+            result: $Utils.Optional<PublicationCountAggregateOutputType> | number
+          }
+        }
+      }
       Booking: {
         payload: Prisma.$BookingPayload<ExtArgs>
         fields: Prisma.BookingFieldRefs
@@ -1337,6 +1441,7 @@ export namespace Prisma {
     verificationToken?: VerificationTokenOmit
     profile?: ProfileOmit
     service?: ServiceOmit
+    publication?: PublicationOmit
     booking?: BookingOmit
   }
 
@@ -1473,14 +1578,14 @@ export namespace Prisma {
 
   export type ProfileCountOutputType = {
     servicesOffered: number
-    servicesRequested: number
     bookings: number
+    publications: number
   }
 
   export type ProfileCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     servicesOffered?: boolean | ProfileCountOutputTypeCountServicesOfferedArgs
-    servicesRequested?: boolean | ProfileCountOutputTypeCountServicesRequestedArgs
     bookings?: boolean | ProfileCountOutputTypeCountBookingsArgs
+    publications?: boolean | ProfileCountOutputTypeCountPublicationsArgs
   }
 
   // Custom InputTypes
@@ -1504,15 +1609,15 @@ export namespace Prisma {
   /**
    * ProfileCountOutputType without action
    */
-  export type ProfileCountOutputTypeCountServicesRequestedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: ServiceWhereInput
+  export type ProfileCountOutputTypeCountBookingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: BookingWhereInput
   }
 
   /**
    * ProfileCountOutputType without action
    */
-  export type ProfileCountOutputTypeCountBookingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: BookingWhereInput
+  export type ProfileCountOutputTypeCountPublicationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PublicationWhereInput
   }
 
 
@@ -1521,11 +1626,13 @@ export namespace Prisma {
    */
 
   export type ServiceCountOutputType = {
-    bookings: number
+    profilesOffering: number
+    publications: number
   }
 
   export type ServiceCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    bookings?: boolean | ServiceCountOutputTypeCountBookingsArgs
+    profilesOffering?: boolean | ServiceCountOutputTypeCountProfilesOfferingArgs
+    publications?: boolean | ServiceCountOutputTypeCountPublicationsArgs
   }
 
   // Custom InputTypes
@@ -1542,7 +1649,45 @@ export namespace Prisma {
   /**
    * ServiceCountOutputType without action
    */
-  export type ServiceCountOutputTypeCountBookingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ServiceCountOutputTypeCountProfilesOfferingArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProfileWhereInput
+  }
+
+  /**
+   * ServiceCountOutputType without action
+   */
+  export type ServiceCountOutputTypeCountPublicationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PublicationWhereInput
+  }
+
+
+  /**
+   * Count Type PublicationCountOutputType
+   */
+
+  export type PublicationCountOutputType = {
+    bookings: number
+  }
+
+  export type PublicationCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    bookings?: boolean | PublicationCountOutputTypeCountBookingsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * PublicationCountOutputType without action
+   */
+  export type PublicationCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PublicationCountOutputType
+     */
+    select?: PublicationCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * PublicationCountOutputType without action
+   */
+  export type PublicationCountOutputTypeCountBookingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: BookingWhereInput
   }
 
@@ -6111,8 +6256,8 @@ export namespace Prisma {
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
     servicesOffered?: boolean | Profile$servicesOfferedArgs<ExtArgs>
-    servicesRequested?: boolean | Profile$servicesRequestedArgs<ExtArgs>
     bookings?: boolean | Profile$bookingsArgs<ExtArgs>
+    publications?: boolean | Profile$publicationsArgs<ExtArgs>
     _count?: boolean | ProfileCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["profile"]>
 
@@ -6176,8 +6321,8 @@ export namespace Prisma {
   export type ProfileInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     servicesOffered?: boolean | Profile$servicesOfferedArgs<ExtArgs>
-    servicesRequested?: boolean | Profile$servicesRequestedArgs<ExtArgs>
     bookings?: boolean | Profile$bookingsArgs<ExtArgs>
+    publications?: boolean | Profile$publicationsArgs<ExtArgs>
     _count?: boolean | ProfileCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ProfileIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -6192,8 +6337,8 @@ export namespace Prisma {
     objects: {
       user: Prisma.$UserPayload<ExtArgs>
       servicesOffered: Prisma.$ServicePayload<ExtArgs>[]
-      servicesRequested: Prisma.$ServicePayload<ExtArgs>[]
       bookings: Prisma.$BookingPayload<ExtArgs>[]
+      publications: Prisma.$PublicationPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -6607,8 +6752,8 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     servicesOffered<T extends Profile$servicesOfferedArgs<ExtArgs> = {}>(args?: Subset<T, Profile$servicesOfferedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ServicePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    servicesRequested<T extends Profile$servicesRequestedArgs<ExtArgs> = {}>(args?: Subset<T, Profile$servicesRequestedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ServicePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     bookings<T extends Profile$bookingsArgs<ExtArgs> = {}>(args?: Subset<T, Profile$bookingsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BookingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    publications<T extends Profile$publicationsArgs<ExtArgs> = {}>(args?: Subset<T, Profile$publicationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PublicationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7073,30 +7218,6 @@ export namespace Prisma {
   }
 
   /**
-   * Profile.servicesRequested
-   */
-  export type Profile$servicesRequestedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Service
-     */
-    select?: ServiceSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Service
-     */
-    omit?: ServiceOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ServiceInclude<ExtArgs> | null
-    where?: ServiceWhereInput
-    orderBy?: ServiceOrderByWithRelationInput | ServiceOrderByWithRelationInput[]
-    cursor?: ServiceWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: ServiceScalarFieldEnum | ServiceScalarFieldEnum[]
-  }
-
-  /**
    * Profile.bookings
    */
   export type Profile$bookingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -7118,6 +7239,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: BookingScalarFieldEnum | BookingScalarFieldEnum[]
+  }
+
+  /**
+   * Profile.publications
+   */
+  export type Profile$publicationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Publication
+     */
+    select?: PublicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Publication
+     */
+    omit?: PublicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PublicationInclude<ExtArgs> | null
+    where?: PublicationWhereInput
+    orderBy?: PublicationOrderByWithRelationInput | PublicationOrderByWithRelationInput[]
+    cursor?: PublicationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PublicationScalarFieldEnum | PublicationScalarFieldEnum[]
   }
 
   /**
@@ -7145,30 +7290,14 @@ export namespace Prisma {
 
   export type AggregateService = {
     _count: ServiceCountAggregateOutputType | null
-    _avg: ServiceAvgAggregateOutputType | null
-    _sum: ServiceSumAggregateOutputType | null
     _min: ServiceMinAggregateOutputType | null
     _max: ServiceMaxAggregateOutputType | null
-  }
-
-  export type ServiceAvgAggregateOutputType = {
-    price: number | null
-  }
-
-  export type ServiceSumAggregateOutputType = {
-    price: number | null
   }
 
   export type ServiceMinAggregateOutputType = {
     id: string | null
     title: string | null
     description: string | null
-    price: number | null
-    category: string | null
-    imageUrl: string | null
-    location: string | null
-    providerId: string | null
-    requesterId: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -7177,12 +7306,6 @@ export namespace Prisma {
     id: string | null
     title: string | null
     description: string | null
-    price: number | null
-    category: string | null
-    imageUrl: string | null
-    location: string | null
-    providerId: string | null
-    requesterId: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -7191,36 +7314,16 @@ export namespace Prisma {
     id: number
     title: number
     description: number
-    price: number
-    category: number
-    imageUrl: number
-    location: number
-    providerId: number
-    requesterId: number
     createdAt: number
     updatedAt: number
     _all: number
   }
 
 
-  export type ServiceAvgAggregateInputType = {
-    price?: true
-  }
-
-  export type ServiceSumAggregateInputType = {
-    price?: true
-  }
-
   export type ServiceMinAggregateInputType = {
     id?: true
     title?: true
     description?: true
-    price?: true
-    category?: true
-    imageUrl?: true
-    location?: true
-    providerId?: true
-    requesterId?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -7229,12 +7332,6 @@ export namespace Prisma {
     id?: true
     title?: true
     description?: true
-    price?: true
-    category?: true
-    imageUrl?: true
-    location?: true
-    providerId?: true
-    requesterId?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -7243,12 +7340,6 @@ export namespace Prisma {
     id?: true
     title?: true
     description?: true
-    price?: true
-    category?: true
-    imageUrl?: true
-    location?: true
-    providerId?: true
-    requesterId?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -7292,18 +7383,6 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
-     * Select which fields to average
-    **/
-    _avg?: ServiceAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: ServiceSumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
      * Select which fields to find the minimum value
     **/
     _min?: ServiceMinAggregateInputType
@@ -7334,8 +7413,6 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: ServiceCountAggregateInputType | true
-    _avg?: ServiceAvgAggregateInputType
-    _sum?: ServiceSumAggregateInputType
     _min?: ServiceMinAggregateInputType
     _max?: ServiceMaxAggregateInputType
   }
@@ -7343,18 +7420,10 @@ export namespace Prisma {
   export type ServiceGroupByOutputType = {
     id: string
     title: string
-    description: string
-    price: number | null
-    category: string
-    imageUrl: string | null
-    location: string | null
-    providerId: string | null
-    requesterId: string | null
+    description: string | null
     createdAt: Date
     updatedAt: Date
     _count: ServiceCountAggregateOutputType | null
-    _avg: ServiceAvgAggregateOutputType | null
-    _sum: ServiceSumAggregateOutputType | null
     _min: ServiceMinAggregateOutputType | null
     _max: ServiceMaxAggregateOutputType | null
   }
@@ -7377,17 +7446,10 @@ export namespace Prisma {
     id?: boolean
     title?: boolean
     description?: boolean
-    price?: boolean
-    category?: boolean
-    imageUrl?: boolean
-    location?: boolean
-    providerId?: boolean
-    requesterId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    provider?: boolean | Service$providerArgs<ExtArgs>
-    requester?: boolean | Service$requesterArgs<ExtArgs>
-    bookings?: boolean | Service$bookingsArgs<ExtArgs>
+    profilesOffering?: boolean | Service$profilesOfferingArgs<ExtArgs>
+    publications?: boolean | Service$publicationsArgs<ExtArgs>
     _count?: boolean | ServiceCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["service"]>
 
@@ -7395,81 +7457,45 @@ export namespace Prisma {
     id?: boolean
     title?: boolean
     description?: boolean
-    price?: boolean
-    category?: boolean
-    imageUrl?: boolean
-    location?: boolean
-    providerId?: boolean
-    requesterId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    provider?: boolean | Service$providerArgs<ExtArgs>
-    requester?: boolean | Service$requesterArgs<ExtArgs>
   }, ExtArgs["result"]["service"]>
 
   export type ServiceSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     title?: boolean
     description?: boolean
-    price?: boolean
-    category?: boolean
-    imageUrl?: boolean
-    location?: boolean
-    providerId?: boolean
-    requesterId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    provider?: boolean | Service$providerArgs<ExtArgs>
-    requester?: boolean | Service$requesterArgs<ExtArgs>
   }, ExtArgs["result"]["service"]>
 
   export type ServiceSelectScalar = {
     id?: boolean
     title?: boolean
     description?: boolean
-    price?: boolean
-    category?: boolean
-    imageUrl?: boolean
-    location?: boolean
-    providerId?: boolean
-    requesterId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type ServiceOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "price" | "category" | "imageUrl" | "location" | "providerId" | "requesterId" | "createdAt" | "updatedAt", ExtArgs["result"]["service"]>
+  export type ServiceOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "createdAt" | "updatedAt", ExtArgs["result"]["service"]>
   export type ServiceInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    provider?: boolean | Service$providerArgs<ExtArgs>
-    requester?: boolean | Service$requesterArgs<ExtArgs>
-    bookings?: boolean | Service$bookingsArgs<ExtArgs>
+    profilesOffering?: boolean | Service$profilesOfferingArgs<ExtArgs>
+    publications?: boolean | Service$publicationsArgs<ExtArgs>
     _count?: boolean | ServiceCountOutputTypeDefaultArgs<ExtArgs>
   }
-  export type ServiceIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    provider?: boolean | Service$providerArgs<ExtArgs>
-    requester?: boolean | Service$requesterArgs<ExtArgs>
-  }
-  export type ServiceIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    provider?: boolean | Service$providerArgs<ExtArgs>
-    requester?: boolean | Service$requesterArgs<ExtArgs>
-  }
+  export type ServiceIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type ServiceIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
 
   export type $ServicePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Service"
     objects: {
-      provider: Prisma.$ProfilePayload<ExtArgs> | null
-      requester: Prisma.$ProfilePayload<ExtArgs> | null
-      bookings: Prisma.$BookingPayload<ExtArgs>[]
+      profilesOffering: Prisma.$ProfilePayload<ExtArgs>[]
+      publications: Prisma.$PublicationPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       title: string
-      description: string
-      price: number | null
-      category: string
-      imageUrl: string | null
-      location: string | null
-      providerId: string | null
-      requesterId: string | null
+      description: string | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["service"]>
@@ -7866,9 +7892,8 @@ export namespace Prisma {
    */
   export interface Prisma__ServiceClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    provider<T extends Service$providerArgs<ExtArgs> = {}>(args?: Subset<T, Service$providerArgs<ExtArgs>>): Prisma__ProfileClient<$Result.GetResult<Prisma.$ProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-    requester<T extends Service$requesterArgs<ExtArgs> = {}>(args?: Subset<T, Service$requesterArgs<ExtArgs>>): Prisma__ProfileClient<$Result.GetResult<Prisma.$ProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-    bookings<T extends Service$bookingsArgs<ExtArgs> = {}>(args?: Subset<T, Service$bookingsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BookingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    profilesOffering<T extends Service$profilesOfferingArgs<ExtArgs> = {}>(args?: Subset<T, Service$profilesOfferingArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProfilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    publications<T extends Service$publicationsArgs<ExtArgs> = {}>(args?: Subset<T, Service$publicationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PublicationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7901,12 +7926,6 @@ export namespace Prisma {
     readonly id: FieldRef<"Service", 'String'>
     readonly title: FieldRef<"Service", 'String'>
     readonly description: FieldRef<"Service", 'String'>
-    readonly price: FieldRef<"Service", 'Float'>
-    readonly category: FieldRef<"Service", 'String'>
-    readonly imageUrl: FieldRef<"Service", 'String'>
-    readonly location: FieldRef<"Service", 'String'>
-    readonly providerId: FieldRef<"Service", 'String'>
-    readonly requesterId: FieldRef<"Service", 'String'>
     readonly createdAt: FieldRef<"Service", 'DateTime'>
     readonly updatedAt: FieldRef<"Service", 'DateTime'>
   }
@@ -8158,10 +8177,6 @@ export namespace Prisma {
      */
     data: ServiceCreateManyInput | ServiceCreateManyInput[]
     skipDuplicates?: boolean
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ServiceIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -8232,10 +8247,6 @@ export namespace Prisma {
      * Limit how many Services to update.
      */
     limit?: number
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ServiceIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -8305,9 +8316,9 @@ export namespace Prisma {
   }
 
   /**
-   * Service.provider
+   * Service.profilesOffering
    */
-  export type Service$providerArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type Service$profilesOfferingArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the Profile
      */
@@ -8321,49 +8332,35 @@ export namespace Prisma {
      */
     include?: ProfileInclude<ExtArgs> | null
     where?: ProfileWhereInput
-  }
-
-  /**
-   * Service.requester
-   */
-  export type Service$requesterArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Profile
-     */
-    select?: ProfileSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Profile
-     */
-    omit?: ProfileOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ProfileInclude<ExtArgs> | null
-    where?: ProfileWhereInput
-  }
-
-  /**
-   * Service.bookings
-   */
-  export type Service$bookingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Booking
-     */
-    select?: BookingSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Booking
-     */
-    omit?: BookingOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BookingInclude<ExtArgs> | null
-    where?: BookingWhereInput
-    orderBy?: BookingOrderByWithRelationInput | BookingOrderByWithRelationInput[]
-    cursor?: BookingWhereUniqueInput
+    orderBy?: ProfileOrderByWithRelationInput | ProfileOrderByWithRelationInput[]
+    cursor?: ProfileWhereUniqueInput
     take?: number
     skip?: number
-    distinct?: BookingScalarFieldEnum | BookingScalarFieldEnum[]
+    distinct?: ProfileScalarFieldEnum | ProfileScalarFieldEnum[]
+  }
+
+  /**
+   * Service.publications
+   */
+  export type Service$publicationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Publication
+     */
+    select?: PublicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Publication
+     */
+    omit?: PublicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PublicationInclude<ExtArgs> | null
+    where?: PublicationWhereInput
+    orderBy?: PublicationOrderByWithRelationInput | PublicationOrderByWithRelationInput[]
+    cursor?: PublicationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PublicationScalarFieldEnum | PublicationScalarFieldEnum[]
   }
 
   /**
@@ -8386,6 +8383,1223 @@ export namespace Prisma {
 
 
   /**
+   * Model Publication
+   */
+
+  export type AggregatePublication = {
+    _count: PublicationCountAggregateOutputType | null
+    _avg: PublicationAvgAggregateOutputType | null
+    _sum: PublicationSumAggregateOutputType | null
+    _min: PublicationMinAggregateOutputType | null
+    _max: PublicationMaxAggregateOutputType | null
+  }
+
+  export type PublicationAvgAggregateOutputType = {
+    price: Decimal | null
+  }
+
+  export type PublicationSumAggregateOutputType = {
+    price: Decimal | null
+  }
+
+  export type PublicationMinAggregateOutputType = {
+    id: string | null
+    title: string | null
+    description: string | null
+    price: Decimal | null
+    priceType: $Enums.PriceType | null
+    isActive: boolean | null
+    isDeleted: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    providerId: string | null
+    serviceId: string | null
+  }
+
+  export type PublicationMaxAggregateOutputType = {
+    id: string | null
+    title: string | null
+    description: string | null
+    price: Decimal | null
+    priceType: $Enums.PriceType | null
+    isActive: boolean | null
+    isDeleted: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    providerId: string | null
+    serviceId: string | null
+  }
+
+  export type PublicationCountAggregateOutputType = {
+    id: number
+    title: number
+    description: number
+    price: number
+    priceType: number
+    images: number
+    isActive: number
+    isDeleted: number
+    createdAt: number
+    updatedAt: number
+    providerId: number
+    serviceId: number
+    _all: number
+  }
+
+
+  export type PublicationAvgAggregateInputType = {
+    price?: true
+  }
+
+  export type PublicationSumAggregateInputType = {
+    price?: true
+  }
+
+  export type PublicationMinAggregateInputType = {
+    id?: true
+    title?: true
+    description?: true
+    price?: true
+    priceType?: true
+    isActive?: true
+    isDeleted?: true
+    createdAt?: true
+    updatedAt?: true
+    providerId?: true
+    serviceId?: true
+  }
+
+  export type PublicationMaxAggregateInputType = {
+    id?: true
+    title?: true
+    description?: true
+    price?: true
+    priceType?: true
+    isActive?: true
+    isDeleted?: true
+    createdAt?: true
+    updatedAt?: true
+    providerId?: true
+    serviceId?: true
+  }
+
+  export type PublicationCountAggregateInputType = {
+    id?: true
+    title?: true
+    description?: true
+    price?: true
+    priceType?: true
+    images?: true
+    isActive?: true
+    isDeleted?: true
+    createdAt?: true
+    updatedAt?: true
+    providerId?: true
+    serviceId?: true
+    _all?: true
+  }
+
+  export type PublicationAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Publication to aggregate.
+     */
+    where?: PublicationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Publications to fetch.
+     */
+    orderBy?: PublicationOrderByWithRelationInput | PublicationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: PublicationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Publications from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Publications.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Publications
+    **/
+    _count?: true | PublicationCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: PublicationAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: PublicationSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: PublicationMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: PublicationMaxAggregateInputType
+  }
+
+  export type GetPublicationAggregateType<T extends PublicationAggregateArgs> = {
+        [P in keyof T & keyof AggregatePublication]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregatePublication[P]>
+      : GetScalarType<T[P], AggregatePublication[P]>
+  }
+
+
+
+
+  export type PublicationGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PublicationWhereInput
+    orderBy?: PublicationOrderByWithAggregationInput | PublicationOrderByWithAggregationInput[]
+    by: PublicationScalarFieldEnum[] | PublicationScalarFieldEnum
+    having?: PublicationScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: PublicationCountAggregateInputType | true
+    _avg?: PublicationAvgAggregateInputType
+    _sum?: PublicationSumAggregateInputType
+    _min?: PublicationMinAggregateInputType
+    _max?: PublicationMaxAggregateInputType
+  }
+
+  export type PublicationGroupByOutputType = {
+    id: string
+    title: string
+    description: string
+    price: Decimal | null
+    priceType: $Enums.PriceType
+    images: string[]
+    isActive: boolean
+    isDeleted: boolean
+    createdAt: Date
+    updatedAt: Date
+    providerId: string
+    serviceId: string
+    _count: PublicationCountAggregateOutputType | null
+    _avg: PublicationAvgAggregateOutputType | null
+    _sum: PublicationSumAggregateOutputType | null
+    _min: PublicationMinAggregateOutputType | null
+    _max: PublicationMaxAggregateOutputType | null
+  }
+
+  type GetPublicationGroupByPayload<T extends PublicationGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<PublicationGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof PublicationGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], PublicationGroupByOutputType[P]>
+            : GetScalarType<T[P], PublicationGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type PublicationSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    title?: boolean
+    description?: boolean
+    price?: boolean
+    priceType?: boolean
+    images?: boolean
+    isActive?: boolean
+    isDeleted?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    providerId?: boolean
+    serviceId?: boolean
+    provider?: boolean | ProfileDefaultArgs<ExtArgs>
+    service?: boolean | ServiceDefaultArgs<ExtArgs>
+    bookings?: boolean | Publication$bookingsArgs<ExtArgs>
+    _count?: boolean | PublicationCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["publication"]>
+
+  export type PublicationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    title?: boolean
+    description?: boolean
+    price?: boolean
+    priceType?: boolean
+    images?: boolean
+    isActive?: boolean
+    isDeleted?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    providerId?: boolean
+    serviceId?: boolean
+    provider?: boolean | ProfileDefaultArgs<ExtArgs>
+    service?: boolean | ServiceDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["publication"]>
+
+  export type PublicationSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    title?: boolean
+    description?: boolean
+    price?: boolean
+    priceType?: boolean
+    images?: boolean
+    isActive?: boolean
+    isDeleted?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    providerId?: boolean
+    serviceId?: boolean
+    provider?: boolean | ProfileDefaultArgs<ExtArgs>
+    service?: boolean | ServiceDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["publication"]>
+
+  export type PublicationSelectScalar = {
+    id?: boolean
+    title?: boolean
+    description?: boolean
+    price?: boolean
+    priceType?: boolean
+    images?: boolean
+    isActive?: boolean
+    isDeleted?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    providerId?: boolean
+    serviceId?: boolean
+  }
+
+  export type PublicationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "price" | "priceType" | "images" | "isActive" | "isDeleted" | "createdAt" | "updatedAt" | "providerId" | "serviceId", ExtArgs["result"]["publication"]>
+  export type PublicationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    provider?: boolean | ProfileDefaultArgs<ExtArgs>
+    service?: boolean | ServiceDefaultArgs<ExtArgs>
+    bookings?: boolean | Publication$bookingsArgs<ExtArgs>
+    _count?: boolean | PublicationCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type PublicationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    provider?: boolean | ProfileDefaultArgs<ExtArgs>
+    service?: boolean | ServiceDefaultArgs<ExtArgs>
+  }
+  export type PublicationIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    provider?: boolean | ProfileDefaultArgs<ExtArgs>
+    service?: boolean | ServiceDefaultArgs<ExtArgs>
+  }
+
+  export type $PublicationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Publication"
+    objects: {
+      provider: Prisma.$ProfilePayload<ExtArgs>
+      service: Prisma.$ServicePayload<ExtArgs>
+      bookings: Prisma.$BookingPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      title: string
+      description: string
+      price: Prisma.Decimal | null
+      priceType: $Enums.PriceType
+      images: string[]
+      isActive: boolean
+      isDeleted: boolean
+      createdAt: Date
+      updatedAt: Date
+      providerId: string
+      serviceId: string
+    }, ExtArgs["result"]["publication"]>
+    composites: {}
+  }
+
+  type PublicationGetPayload<S extends boolean | null | undefined | PublicationDefaultArgs> = $Result.GetResult<Prisma.$PublicationPayload, S>
+
+  type PublicationCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<PublicationFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: PublicationCountAggregateInputType | true
+    }
+
+  export interface PublicationDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Publication'], meta: { name: 'Publication' } }
+    /**
+     * Find zero or one Publication that matches the filter.
+     * @param {PublicationFindUniqueArgs} args - Arguments to find a Publication
+     * @example
+     * // Get one Publication
+     * const publication = await prisma.publication.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends PublicationFindUniqueArgs>(args: SelectSubset<T, PublicationFindUniqueArgs<ExtArgs>>): Prisma__PublicationClient<$Result.GetResult<Prisma.$PublicationPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Publication that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {PublicationFindUniqueOrThrowArgs} args - Arguments to find a Publication
+     * @example
+     * // Get one Publication
+     * const publication = await prisma.publication.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends PublicationFindUniqueOrThrowArgs>(args: SelectSubset<T, PublicationFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PublicationClient<$Result.GetResult<Prisma.$PublicationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Publication that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PublicationFindFirstArgs} args - Arguments to find a Publication
+     * @example
+     * // Get one Publication
+     * const publication = await prisma.publication.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends PublicationFindFirstArgs>(args?: SelectSubset<T, PublicationFindFirstArgs<ExtArgs>>): Prisma__PublicationClient<$Result.GetResult<Prisma.$PublicationPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Publication that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PublicationFindFirstOrThrowArgs} args - Arguments to find a Publication
+     * @example
+     * // Get one Publication
+     * const publication = await prisma.publication.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends PublicationFindFirstOrThrowArgs>(args?: SelectSubset<T, PublicationFindFirstOrThrowArgs<ExtArgs>>): Prisma__PublicationClient<$Result.GetResult<Prisma.$PublicationPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Publications that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PublicationFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Publications
+     * const publications = await prisma.publication.findMany()
+     * 
+     * // Get first 10 Publications
+     * const publications = await prisma.publication.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const publicationWithIdOnly = await prisma.publication.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends PublicationFindManyArgs>(args?: SelectSubset<T, PublicationFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PublicationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Publication.
+     * @param {PublicationCreateArgs} args - Arguments to create a Publication.
+     * @example
+     * // Create one Publication
+     * const Publication = await prisma.publication.create({
+     *   data: {
+     *     // ... data to create a Publication
+     *   }
+     * })
+     * 
+     */
+    create<T extends PublicationCreateArgs>(args: SelectSubset<T, PublicationCreateArgs<ExtArgs>>): Prisma__PublicationClient<$Result.GetResult<Prisma.$PublicationPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Publications.
+     * @param {PublicationCreateManyArgs} args - Arguments to create many Publications.
+     * @example
+     * // Create many Publications
+     * const publication = await prisma.publication.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends PublicationCreateManyArgs>(args?: SelectSubset<T, PublicationCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Publications and returns the data saved in the database.
+     * @param {PublicationCreateManyAndReturnArgs} args - Arguments to create many Publications.
+     * @example
+     * // Create many Publications
+     * const publication = await prisma.publication.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Publications and only return the `id`
+     * const publicationWithIdOnly = await prisma.publication.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends PublicationCreateManyAndReturnArgs>(args?: SelectSubset<T, PublicationCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PublicationPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Publication.
+     * @param {PublicationDeleteArgs} args - Arguments to delete one Publication.
+     * @example
+     * // Delete one Publication
+     * const Publication = await prisma.publication.delete({
+     *   where: {
+     *     // ... filter to delete one Publication
+     *   }
+     * })
+     * 
+     */
+    delete<T extends PublicationDeleteArgs>(args: SelectSubset<T, PublicationDeleteArgs<ExtArgs>>): Prisma__PublicationClient<$Result.GetResult<Prisma.$PublicationPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Publication.
+     * @param {PublicationUpdateArgs} args - Arguments to update one Publication.
+     * @example
+     * // Update one Publication
+     * const publication = await prisma.publication.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends PublicationUpdateArgs>(args: SelectSubset<T, PublicationUpdateArgs<ExtArgs>>): Prisma__PublicationClient<$Result.GetResult<Prisma.$PublicationPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Publications.
+     * @param {PublicationDeleteManyArgs} args - Arguments to filter Publications to delete.
+     * @example
+     * // Delete a few Publications
+     * const { count } = await prisma.publication.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends PublicationDeleteManyArgs>(args?: SelectSubset<T, PublicationDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Publications.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PublicationUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Publications
+     * const publication = await prisma.publication.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends PublicationUpdateManyArgs>(args: SelectSubset<T, PublicationUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Publications and returns the data updated in the database.
+     * @param {PublicationUpdateManyAndReturnArgs} args - Arguments to update many Publications.
+     * @example
+     * // Update many Publications
+     * const publication = await prisma.publication.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Publications and only return the `id`
+     * const publicationWithIdOnly = await prisma.publication.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends PublicationUpdateManyAndReturnArgs>(args: SelectSubset<T, PublicationUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PublicationPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Publication.
+     * @param {PublicationUpsertArgs} args - Arguments to update or create a Publication.
+     * @example
+     * // Update or create a Publication
+     * const publication = await prisma.publication.upsert({
+     *   create: {
+     *     // ... data to create a Publication
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Publication we want to update
+     *   }
+     * })
+     */
+    upsert<T extends PublicationUpsertArgs>(args: SelectSubset<T, PublicationUpsertArgs<ExtArgs>>): Prisma__PublicationClient<$Result.GetResult<Prisma.$PublicationPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Publications.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PublicationCountArgs} args - Arguments to filter Publications to count.
+     * @example
+     * // Count the number of Publications
+     * const count = await prisma.publication.count({
+     *   where: {
+     *     // ... the filter for the Publications we want to count
+     *   }
+     * })
+    **/
+    count<T extends PublicationCountArgs>(
+      args?: Subset<T, PublicationCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], PublicationCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Publication.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PublicationAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends PublicationAggregateArgs>(args: Subset<T, PublicationAggregateArgs>): Prisma.PrismaPromise<GetPublicationAggregateType<T>>
+
+    /**
+     * Group by Publication.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PublicationGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends PublicationGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: PublicationGroupByArgs['orderBy'] }
+        : { orderBy?: PublicationGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, PublicationGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPublicationGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Publication model
+   */
+  readonly fields: PublicationFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Publication.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__PublicationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    provider<T extends ProfileDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProfileDefaultArgs<ExtArgs>>): Prisma__ProfileClient<$Result.GetResult<Prisma.$ProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    service<T extends ServiceDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ServiceDefaultArgs<ExtArgs>>): Prisma__ServiceClient<$Result.GetResult<Prisma.$ServicePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    bookings<T extends Publication$bookingsArgs<ExtArgs> = {}>(args?: Subset<T, Publication$bookingsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BookingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Publication model
+   */
+  interface PublicationFieldRefs {
+    readonly id: FieldRef<"Publication", 'String'>
+    readonly title: FieldRef<"Publication", 'String'>
+    readonly description: FieldRef<"Publication", 'String'>
+    readonly price: FieldRef<"Publication", 'Decimal'>
+    readonly priceType: FieldRef<"Publication", 'PriceType'>
+    readonly images: FieldRef<"Publication", 'String[]'>
+    readonly isActive: FieldRef<"Publication", 'Boolean'>
+    readonly isDeleted: FieldRef<"Publication", 'Boolean'>
+    readonly createdAt: FieldRef<"Publication", 'DateTime'>
+    readonly updatedAt: FieldRef<"Publication", 'DateTime'>
+    readonly providerId: FieldRef<"Publication", 'String'>
+    readonly serviceId: FieldRef<"Publication", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Publication findUnique
+   */
+  export type PublicationFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Publication
+     */
+    select?: PublicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Publication
+     */
+    omit?: PublicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PublicationInclude<ExtArgs> | null
+    /**
+     * Filter, which Publication to fetch.
+     */
+    where: PublicationWhereUniqueInput
+  }
+
+  /**
+   * Publication findUniqueOrThrow
+   */
+  export type PublicationFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Publication
+     */
+    select?: PublicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Publication
+     */
+    omit?: PublicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PublicationInclude<ExtArgs> | null
+    /**
+     * Filter, which Publication to fetch.
+     */
+    where: PublicationWhereUniqueInput
+  }
+
+  /**
+   * Publication findFirst
+   */
+  export type PublicationFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Publication
+     */
+    select?: PublicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Publication
+     */
+    omit?: PublicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PublicationInclude<ExtArgs> | null
+    /**
+     * Filter, which Publication to fetch.
+     */
+    where?: PublicationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Publications to fetch.
+     */
+    orderBy?: PublicationOrderByWithRelationInput | PublicationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Publications.
+     */
+    cursor?: PublicationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Publications from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Publications.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Publications.
+     */
+    distinct?: PublicationScalarFieldEnum | PublicationScalarFieldEnum[]
+  }
+
+  /**
+   * Publication findFirstOrThrow
+   */
+  export type PublicationFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Publication
+     */
+    select?: PublicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Publication
+     */
+    omit?: PublicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PublicationInclude<ExtArgs> | null
+    /**
+     * Filter, which Publication to fetch.
+     */
+    where?: PublicationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Publications to fetch.
+     */
+    orderBy?: PublicationOrderByWithRelationInput | PublicationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Publications.
+     */
+    cursor?: PublicationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Publications from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Publications.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Publications.
+     */
+    distinct?: PublicationScalarFieldEnum | PublicationScalarFieldEnum[]
+  }
+
+  /**
+   * Publication findMany
+   */
+  export type PublicationFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Publication
+     */
+    select?: PublicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Publication
+     */
+    omit?: PublicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PublicationInclude<ExtArgs> | null
+    /**
+     * Filter, which Publications to fetch.
+     */
+    where?: PublicationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Publications to fetch.
+     */
+    orderBy?: PublicationOrderByWithRelationInput | PublicationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Publications.
+     */
+    cursor?: PublicationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Publications from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Publications.
+     */
+    skip?: number
+    distinct?: PublicationScalarFieldEnum | PublicationScalarFieldEnum[]
+  }
+
+  /**
+   * Publication create
+   */
+  export type PublicationCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Publication
+     */
+    select?: PublicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Publication
+     */
+    omit?: PublicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PublicationInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Publication.
+     */
+    data: XOR<PublicationCreateInput, PublicationUncheckedCreateInput>
+  }
+
+  /**
+   * Publication createMany
+   */
+  export type PublicationCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Publications.
+     */
+    data: PublicationCreateManyInput | PublicationCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Publication createManyAndReturn
+   */
+  export type PublicationCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Publication
+     */
+    select?: PublicationSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Publication
+     */
+    omit?: PublicationOmit<ExtArgs> | null
+    /**
+     * The data used to create many Publications.
+     */
+    data: PublicationCreateManyInput | PublicationCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PublicationIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Publication update
+   */
+  export type PublicationUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Publication
+     */
+    select?: PublicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Publication
+     */
+    omit?: PublicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PublicationInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Publication.
+     */
+    data: XOR<PublicationUpdateInput, PublicationUncheckedUpdateInput>
+    /**
+     * Choose, which Publication to update.
+     */
+    where: PublicationWhereUniqueInput
+  }
+
+  /**
+   * Publication updateMany
+   */
+  export type PublicationUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Publications.
+     */
+    data: XOR<PublicationUpdateManyMutationInput, PublicationUncheckedUpdateManyInput>
+    /**
+     * Filter which Publications to update
+     */
+    where?: PublicationWhereInput
+    /**
+     * Limit how many Publications to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Publication updateManyAndReturn
+   */
+  export type PublicationUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Publication
+     */
+    select?: PublicationSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Publication
+     */
+    omit?: PublicationOmit<ExtArgs> | null
+    /**
+     * The data used to update Publications.
+     */
+    data: XOR<PublicationUpdateManyMutationInput, PublicationUncheckedUpdateManyInput>
+    /**
+     * Filter which Publications to update
+     */
+    where?: PublicationWhereInput
+    /**
+     * Limit how many Publications to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PublicationIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Publication upsert
+   */
+  export type PublicationUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Publication
+     */
+    select?: PublicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Publication
+     */
+    omit?: PublicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PublicationInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Publication to update in case it exists.
+     */
+    where: PublicationWhereUniqueInput
+    /**
+     * In case the Publication found by the `where` argument doesn't exist, create a new Publication with this data.
+     */
+    create: XOR<PublicationCreateInput, PublicationUncheckedCreateInput>
+    /**
+     * In case the Publication was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<PublicationUpdateInput, PublicationUncheckedUpdateInput>
+  }
+
+  /**
+   * Publication delete
+   */
+  export type PublicationDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Publication
+     */
+    select?: PublicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Publication
+     */
+    omit?: PublicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PublicationInclude<ExtArgs> | null
+    /**
+     * Filter which Publication to delete.
+     */
+    where: PublicationWhereUniqueInput
+  }
+
+  /**
+   * Publication deleteMany
+   */
+  export type PublicationDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Publications to delete
+     */
+    where?: PublicationWhereInput
+    /**
+     * Limit how many Publications to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Publication.bookings
+   */
+  export type Publication$bookingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Booking
+     */
+    select?: BookingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Booking
+     */
+    omit?: BookingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BookingInclude<ExtArgs> | null
+    where?: BookingWhereInput
+    orderBy?: BookingOrderByWithRelationInput | BookingOrderByWithRelationInput[]
+    cursor?: BookingWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: BookingScalarFieldEnum | BookingScalarFieldEnum[]
+  }
+
+  /**
+   * Publication without action
+   */
+  export type PublicationDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Publication
+     */
+    select?: PublicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Publication
+     */
+    omit?: PublicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PublicationInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model Booking
    */
 
@@ -8397,58 +9611,64 @@ export namespace Prisma {
 
   export type BookingMinAggregateOutputType = {
     id: string | null
-    serviceId: string | null
-    userId: string | null
+    publicationId: string | null
+    clientId: string | null
     date: Date | null
     status: string | null
     createdAt: Date | null
+    updatedAt: Date | null
   }
 
   export type BookingMaxAggregateOutputType = {
     id: string | null
-    serviceId: string | null
-    userId: string | null
+    publicationId: string | null
+    clientId: string | null
     date: Date | null
     status: string | null
     createdAt: Date | null
+    updatedAt: Date | null
   }
 
   export type BookingCountAggregateOutputType = {
     id: number
-    serviceId: number
-    userId: number
+    publicationId: number
+    clientId: number
     date: number
     status: number
     createdAt: number
+    updatedAt: number
     _all: number
   }
 
 
   export type BookingMinAggregateInputType = {
     id?: true
-    serviceId?: true
-    userId?: true
+    publicationId?: true
+    clientId?: true
     date?: true
     status?: true
     createdAt?: true
+    updatedAt?: true
   }
 
   export type BookingMaxAggregateInputType = {
     id?: true
-    serviceId?: true
-    userId?: true
+    publicationId?: true
+    clientId?: true
     date?: true
     status?: true
     createdAt?: true
+    updatedAt?: true
   }
 
   export type BookingCountAggregateInputType = {
     id?: true
-    serviceId?: true
-    userId?: true
+    publicationId?: true
+    clientId?: true
     date?: true
     status?: true
     createdAt?: true
+    updatedAt?: true
     _all?: true
   }
 
@@ -8526,11 +9746,12 @@ export namespace Prisma {
 
   export type BookingGroupByOutputType = {
     id: string
-    serviceId: string
-    userId: string
+    publicationId: string | null
+    clientId: string
     date: Date
     status: string
     createdAt: Date
+    updatedAt: Date
     _count: BookingCountAggregateOutputType | null
     _min: BookingMinAggregateOutputType | null
     _max: BookingMaxAggregateOutputType | null
@@ -8552,73 +9773,78 @@ export namespace Prisma {
 
   export type BookingSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    serviceId?: boolean
-    userId?: boolean
+    publicationId?: boolean
+    clientId?: boolean
     date?: boolean
     status?: boolean
     createdAt?: boolean
-    service?: boolean | ServiceDefaultArgs<ExtArgs>
-    user?: boolean | ProfileDefaultArgs<ExtArgs>
+    updatedAt?: boolean
+    publication?: boolean | Booking$publicationArgs<ExtArgs>
+    client?: boolean | ProfileDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["booking"]>
 
   export type BookingSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    serviceId?: boolean
-    userId?: boolean
+    publicationId?: boolean
+    clientId?: boolean
     date?: boolean
     status?: boolean
     createdAt?: boolean
-    service?: boolean | ServiceDefaultArgs<ExtArgs>
-    user?: boolean | ProfileDefaultArgs<ExtArgs>
+    updatedAt?: boolean
+    publication?: boolean | Booking$publicationArgs<ExtArgs>
+    client?: boolean | ProfileDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["booking"]>
 
   export type BookingSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    serviceId?: boolean
-    userId?: boolean
+    publicationId?: boolean
+    clientId?: boolean
     date?: boolean
     status?: boolean
     createdAt?: boolean
-    service?: boolean | ServiceDefaultArgs<ExtArgs>
-    user?: boolean | ProfileDefaultArgs<ExtArgs>
+    updatedAt?: boolean
+    publication?: boolean | Booking$publicationArgs<ExtArgs>
+    client?: boolean | ProfileDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["booking"]>
 
   export type BookingSelectScalar = {
     id?: boolean
-    serviceId?: boolean
-    userId?: boolean
+    publicationId?: boolean
+    clientId?: boolean
     date?: boolean
     status?: boolean
     createdAt?: boolean
+    updatedAt?: boolean
   }
 
-  export type BookingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "serviceId" | "userId" | "date" | "status" | "createdAt", ExtArgs["result"]["booking"]>
+  export type BookingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "publicationId" | "clientId" | "date" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["booking"]>
   export type BookingInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    service?: boolean | ServiceDefaultArgs<ExtArgs>
-    user?: boolean | ProfileDefaultArgs<ExtArgs>
+    publication?: boolean | Booking$publicationArgs<ExtArgs>
+    client?: boolean | ProfileDefaultArgs<ExtArgs>
   }
   export type BookingIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    service?: boolean | ServiceDefaultArgs<ExtArgs>
-    user?: boolean | ProfileDefaultArgs<ExtArgs>
+    publication?: boolean | Booking$publicationArgs<ExtArgs>
+    client?: boolean | ProfileDefaultArgs<ExtArgs>
   }
   export type BookingIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    service?: boolean | ServiceDefaultArgs<ExtArgs>
-    user?: boolean | ProfileDefaultArgs<ExtArgs>
+    publication?: boolean | Booking$publicationArgs<ExtArgs>
+    client?: boolean | ProfileDefaultArgs<ExtArgs>
   }
 
   export type $BookingPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Booking"
     objects: {
-      service: Prisma.$ServicePayload<ExtArgs>
-      user: Prisma.$ProfilePayload<ExtArgs>
+      publication: Prisma.$PublicationPayload<ExtArgs> | null
+      client: Prisma.$ProfilePayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
-      serviceId: string
-      userId: string
+      publicationId: string | null
+      clientId: string
       date: Date
       status: string
       createdAt: Date
+      updatedAt: Date
     }, ExtArgs["result"]["booking"]>
     composites: {}
   }
@@ -9013,8 +10239,8 @@ export namespace Prisma {
    */
   export interface Prisma__BookingClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    service<T extends ServiceDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ServiceDefaultArgs<ExtArgs>>): Prisma__ServiceClient<$Result.GetResult<Prisma.$ServicePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    user<T extends ProfileDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProfileDefaultArgs<ExtArgs>>): Prisma__ProfileClient<$Result.GetResult<Prisma.$ProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    publication<T extends Booking$publicationArgs<ExtArgs> = {}>(args?: Subset<T, Booking$publicationArgs<ExtArgs>>): Prisma__PublicationClient<$Result.GetResult<Prisma.$PublicationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    client<T extends ProfileDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProfileDefaultArgs<ExtArgs>>): Prisma__ProfileClient<$Result.GetResult<Prisma.$ProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -9045,11 +10271,12 @@ export namespace Prisma {
    */
   interface BookingFieldRefs {
     readonly id: FieldRef<"Booking", 'String'>
-    readonly serviceId: FieldRef<"Booking", 'String'>
-    readonly userId: FieldRef<"Booking", 'String'>
+    readonly publicationId: FieldRef<"Booking", 'String'>
+    readonly clientId: FieldRef<"Booking", 'String'>
     readonly date: FieldRef<"Booking", 'DateTime'>
     readonly status: FieldRef<"Booking", 'String'>
     readonly createdAt: FieldRef<"Booking", 'DateTime'>
+    readonly updatedAt: FieldRef<"Booking", 'DateTime'>
   }
     
 
@@ -9446,6 +10673,25 @@ export namespace Prisma {
   }
 
   /**
+   * Booking.publication
+   */
+  export type Booking$publicationArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Publication
+     */
+    select?: PublicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Publication
+     */
+    omit?: PublicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PublicationInclude<ExtArgs> | null
+    where?: PublicationWhereInput
+  }
+
+  /**
    * Booking without action
    */
   export type BookingDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -9551,12 +10797,6 @@ export namespace Prisma {
     id: 'id',
     title: 'title',
     description: 'description',
-    price: 'price',
-    category: 'category',
-    imageUrl: 'imageUrl',
-    location: 'location',
-    providerId: 'providerId',
-    requesterId: 'requesterId',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -9564,13 +10804,32 @@ export namespace Prisma {
   export type ServiceScalarFieldEnum = (typeof ServiceScalarFieldEnum)[keyof typeof ServiceScalarFieldEnum]
 
 
+  export const PublicationScalarFieldEnum: {
+    id: 'id',
+    title: 'title',
+    description: 'description',
+    price: 'price',
+    priceType: 'priceType',
+    images: 'images',
+    isActive: 'isActive',
+    isDeleted: 'isDeleted',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    providerId: 'providerId',
+    serviceId: 'serviceId'
+  };
+
+  export type PublicationScalarFieldEnum = (typeof PublicationScalarFieldEnum)[keyof typeof PublicationScalarFieldEnum]
+
+
   export const BookingScalarFieldEnum: {
     id: 'id',
-    serviceId: 'serviceId',
-    userId: 'userId',
+    publicationId: 'publicationId',
+    clientId: 'clientId',
     date: 'date',
     status: 'status',
-    createdAt: 'createdAt'
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
   };
 
   export type BookingScalarFieldEnum = (typeof BookingScalarFieldEnum)[keyof typeof BookingScalarFieldEnum]
@@ -9658,6 +10917,41 @@ export namespace Prisma {
    * Reference to a field of type 'Role[]'
    */
   export type ListEnumRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Role[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Decimal'
+   */
+  export type DecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal'>
+    
+
+
+  /**
+   * Reference to a field of type 'Decimal[]'
+   */
+  export type ListDecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'PriceType'
+   */
+  export type EnumPriceTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PriceType'>
+    
+
+
+  /**
+   * Reference to a field of type 'PriceType[]'
+   */
+  export type ListEnumPriceTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PriceType[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Boolean'
+   */
+  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
 
 
@@ -9946,8 +11240,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Profile"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     servicesOffered?: ServiceListRelationFilter
-    servicesRequested?: ServiceListRelationFilter
     bookings?: BookingListRelationFilter
+    publications?: PublicationListRelationFilter
   }
 
   export type ProfileOrderByWithRelationInput = {
@@ -9968,8 +11262,8 @@ export namespace Prisma {
     updatedAt?: SortOrder
     user?: UserOrderByWithRelationInput
     servicesOffered?: ServiceOrderByRelationAggregateInput
-    servicesRequested?: ServiceOrderByRelationAggregateInput
     bookings?: BookingOrderByRelationAggregateInput
+    publications?: PublicationOrderByRelationAggregateInput
   }
 
   export type ProfileWhereUniqueInput = Prisma.AtLeast<{
@@ -9993,8 +11287,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Profile"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     servicesOffered?: ServiceListRelationFilter
-    servicesRequested?: ServiceListRelationFilter
     bookings?: BookingListRelationFilter
+    publications?: PublicationListRelationFilter
   }, "id" | "authUserId" | "email">
 
   export type ProfileOrderByWithAggregationInput = {
@@ -10045,74 +11339,45 @@ export namespace Prisma {
     NOT?: ServiceWhereInput | ServiceWhereInput[]
     id?: StringFilter<"Service"> | string
     title?: StringFilter<"Service"> | string
-    description?: StringFilter<"Service"> | string
-    price?: FloatNullableFilter<"Service"> | number | null
-    category?: StringFilter<"Service"> | string
-    imageUrl?: StringNullableFilter<"Service"> | string | null
-    location?: StringNullableFilter<"Service"> | string | null
-    providerId?: StringNullableFilter<"Service"> | string | null
-    requesterId?: StringNullableFilter<"Service"> | string | null
+    description?: StringNullableFilter<"Service"> | string | null
     createdAt?: DateTimeFilter<"Service"> | Date | string
     updatedAt?: DateTimeFilter<"Service"> | Date | string
-    provider?: XOR<ProfileNullableScalarRelationFilter, ProfileWhereInput> | null
-    requester?: XOR<ProfileNullableScalarRelationFilter, ProfileWhereInput> | null
-    bookings?: BookingListRelationFilter
+    profilesOffering?: ProfileListRelationFilter
+    publications?: PublicationListRelationFilter
   }
 
   export type ServiceOrderByWithRelationInput = {
     id?: SortOrder
     title?: SortOrder
-    description?: SortOrder
-    price?: SortOrderInput | SortOrder
-    category?: SortOrder
-    imageUrl?: SortOrderInput | SortOrder
-    location?: SortOrderInput | SortOrder
-    providerId?: SortOrderInput | SortOrder
-    requesterId?: SortOrderInput | SortOrder
+    description?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    provider?: ProfileOrderByWithRelationInput
-    requester?: ProfileOrderByWithRelationInput
-    bookings?: BookingOrderByRelationAggregateInput
+    profilesOffering?: ProfileOrderByRelationAggregateInput
+    publications?: PublicationOrderByRelationAggregateInput
   }
 
   export type ServiceWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    title?: string
     AND?: ServiceWhereInput | ServiceWhereInput[]
     OR?: ServiceWhereInput[]
     NOT?: ServiceWhereInput | ServiceWhereInput[]
-    title?: StringFilter<"Service"> | string
-    description?: StringFilter<"Service"> | string
-    price?: FloatNullableFilter<"Service"> | number | null
-    category?: StringFilter<"Service"> | string
-    imageUrl?: StringNullableFilter<"Service"> | string | null
-    location?: StringNullableFilter<"Service"> | string | null
-    providerId?: StringNullableFilter<"Service"> | string | null
-    requesterId?: StringNullableFilter<"Service"> | string | null
+    description?: StringNullableFilter<"Service"> | string | null
     createdAt?: DateTimeFilter<"Service"> | Date | string
     updatedAt?: DateTimeFilter<"Service"> | Date | string
-    provider?: XOR<ProfileNullableScalarRelationFilter, ProfileWhereInput> | null
-    requester?: XOR<ProfileNullableScalarRelationFilter, ProfileWhereInput> | null
-    bookings?: BookingListRelationFilter
-  }, "id">
+    profilesOffering?: ProfileListRelationFilter
+    publications?: PublicationListRelationFilter
+  }, "id" | "title">
 
   export type ServiceOrderByWithAggregationInput = {
     id?: SortOrder
     title?: SortOrder
-    description?: SortOrder
-    price?: SortOrderInput | SortOrder
-    category?: SortOrder
-    imageUrl?: SortOrderInput | SortOrder
-    location?: SortOrderInput | SortOrder
-    providerId?: SortOrderInput | SortOrder
-    requesterId?: SortOrderInput | SortOrder
+    description?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: ServiceCountOrderByAggregateInput
-    _avg?: ServiceAvgOrderByAggregateInput
     _max?: ServiceMaxOrderByAggregateInput
     _min?: ServiceMinOrderByAggregateInput
-    _sum?: ServiceSumOrderByAggregateInput
   }
 
   export type ServiceScalarWhereWithAggregatesInput = {
@@ -10121,15 +11386,107 @@ export namespace Prisma {
     NOT?: ServiceScalarWhereWithAggregatesInput | ServiceScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Service"> | string
     title?: StringWithAggregatesFilter<"Service"> | string
-    description?: StringWithAggregatesFilter<"Service"> | string
-    price?: FloatNullableWithAggregatesFilter<"Service"> | number | null
-    category?: StringWithAggregatesFilter<"Service"> | string
-    imageUrl?: StringNullableWithAggregatesFilter<"Service"> | string | null
-    location?: StringNullableWithAggregatesFilter<"Service"> | string | null
-    providerId?: StringNullableWithAggregatesFilter<"Service"> | string | null
-    requesterId?: StringNullableWithAggregatesFilter<"Service"> | string | null
+    description?: StringNullableWithAggregatesFilter<"Service"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Service"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Service"> | Date | string
+  }
+
+  export type PublicationWhereInput = {
+    AND?: PublicationWhereInput | PublicationWhereInput[]
+    OR?: PublicationWhereInput[]
+    NOT?: PublicationWhereInput | PublicationWhereInput[]
+    id?: StringFilter<"Publication"> | string
+    title?: StringFilter<"Publication"> | string
+    description?: StringFilter<"Publication"> | string
+    price?: DecimalNullableFilter<"Publication"> | Decimal | DecimalJsLike | number | string | null
+    priceType?: EnumPriceTypeFilter<"Publication"> | $Enums.PriceType
+    images?: StringNullableListFilter<"Publication">
+    isActive?: BoolFilter<"Publication"> | boolean
+    isDeleted?: BoolFilter<"Publication"> | boolean
+    createdAt?: DateTimeFilter<"Publication"> | Date | string
+    updatedAt?: DateTimeFilter<"Publication"> | Date | string
+    providerId?: StringFilter<"Publication"> | string
+    serviceId?: StringFilter<"Publication"> | string
+    provider?: XOR<ProfileScalarRelationFilter, ProfileWhereInput>
+    service?: XOR<ServiceScalarRelationFilter, ServiceWhereInput>
+    bookings?: BookingListRelationFilter
+  }
+
+  export type PublicationOrderByWithRelationInput = {
+    id?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    price?: SortOrderInput | SortOrder
+    priceType?: SortOrder
+    images?: SortOrder
+    isActive?: SortOrder
+    isDeleted?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    providerId?: SortOrder
+    serviceId?: SortOrder
+    provider?: ProfileOrderByWithRelationInput
+    service?: ServiceOrderByWithRelationInput
+    bookings?: BookingOrderByRelationAggregateInput
+  }
+
+  export type PublicationWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: PublicationWhereInput | PublicationWhereInput[]
+    OR?: PublicationWhereInput[]
+    NOT?: PublicationWhereInput | PublicationWhereInput[]
+    title?: StringFilter<"Publication"> | string
+    description?: StringFilter<"Publication"> | string
+    price?: DecimalNullableFilter<"Publication"> | Decimal | DecimalJsLike | number | string | null
+    priceType?: EnumPriceTypeFilter<"Publication"> | $Enums.PriceType
+    images?: StringNullableListFilter<"Publication">
+    isActive?: BoolFilter<"Publication"> | boolean
+    isDeleted?: BoolFilter<"Publication"> | boolean
+    createdAt?: DateTimeFilter<"Publication"> | Date | string
+    updatedAt?: DateTimeFilter<"Publication"> | Date | string
+    providerId?: StringFilter<"Publication"> | string
+    serviceId?: StringFilter<"Publication"> | string
+    provider?: XOR<ProfileScalarRelationFilter, ProfileWhereInput>
+    service?: XOR<ServiceScalarRelationFilter, ServiceWhereInput>
+    bookings?: BookingListRelationFilter
+  }, "id">
+
+  export type PublicationOrderByWithAggregationInput = {
+    id?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    price?: SortOrderInput | SortOrder
+    priceType?: SortOrder
+    images?: SortOrder
+    isActive?: SortOrder
+    isDeleted?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    providerId?: SortOrder
+    serviceId?: SortOrder
+    _count?: PublicationCountOrderByAggregateInput
+    _avg?: PublicationAvgOrderByAggregateInput
+    _max?: PublicationMaxOrderByAggregateInput
+    _min?: PublicationMinOrderByAggregateInput
+    _sum?: PublicationSumOrderByAggregateInput
+  }
+
+  export type PublicationScalarWhereWithAggregatesInput = {
+    AND?: PublicationScalarWhereWithAggregatesInput | PublicationScalarWhereWithAggregatesInput[]
+    OR?: PublicationScalarWhereWithAggregatesInput[]
+    NOT?: PublicationScalarWhereWithAggregatesInput | PublicationScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Publication"> | string
+    title?: StringWithAggregatesFilter<"Publication"> | string
+    description?: StringWithAggregatesFilter<"Publication"> | string
+    price?: DecimalNullableWithAggregatesFilter<"Publication"> | Decimal | DecimalJsLike | number | string | null
+    priceType?: EnumPriceTypeWithAggregatesFilter<"Publication"> | $Enums.PriceType
+    images?: StringNullableListFilter<"Publication">
+    isActive?: BoolWithAggregatesFilter<"Publication"> | boolean
+    isDeleted?: BoolWithAggregatesFilter<"Publication"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"Publication"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Publication"> | Date | string
+    providerId?: StringWithAggregatesFilter<"Publication"> | string
+    serviceId?: StringWithAggregatesFilter<"Publication"> | string
   }
 
   export type BookingWhereInput = {
@@ -10137,24 +11494,26 @@ export namespace Prisma {
     OR?: BookingWhereInput[]
     NOT?: BookingWhereInput | BookingWhereInput[]
     id?: StringFilter<"Booking"> | string
-    serviceId?: StringFilter<"Booking"> | string
-    userId?: StringFilter<"Booking"> | string
+    publicationId?: StringNullableFilter<"Booking"> | string | null
+    clientId?: StringFilter<"Booking"> | string
     date?: DateTimeFilter<"Booking"> | Date | string
     status?: StringFilter<"Booking"> | string
     createdAt?: DateTimeFilter<"Booking"> | Date | string
-    service?: XOR<ServiceScalarRelationFilter, ServiceWhereInput>
-    user?: XOR<ProfileScalarRelationFilter, ProfileWhereInput>
+    updatedAt?: DateTimeFilter<"Booking"> | Date | string
+    publication?: XOR<PublicationNullableScalarRelationFilter, PublicationWhereInput> | null
+    client?: XOR<ProfileScalarRelationFilter, ProfileWhereInput>
   }
 
   export type BookingOrderByWithRelationInput = {
     id?: SortOrder
-    serviceId?: SortOrder
-    userId?: SortOrder
+    publicationId?: SortOrderInput | SortOrder
+    clientId?: SortOrder
     date?: SortOrder
     status?: SortOrder
     createdAt?: SortOrder
-    service?: ServiceOrderByWithRelationInput
-    user?: ProfileOrderByWithRelationInput
+    updatedAt?: SortOrder
+    publication?: PublicationOrderByWithRelationInput
+    client?: ProfileOrderByWithRelationInput
   }
 
   export type BookingWhereUniqueInput = Prisma.AtLeast<{
@@ -10162,22 +11521,24 @@ export namespace Prisma {
     AND?: BookingWhereInput | BookingWhereInput[]
     OR?: BookingWhereInput[]
     NOT?: BookingWhereInput | BookingWhereInput[]
-    serviceId?: StringFilter<"Booking"> | string
-    userId?: StringFilter<"Booking"> | string
+    publicationId?: StringNullableFilter<"Booking"> | string | null
+    clientId?: StringFilter<"Booking"> | string
     date?: DateTimeFilter<"Booking"> | Date | string
     status?: StringFilter<"Booking"> | string
     createdAt?: DateTimeFilter<"Booking"> | Date | string
-    service?: XOR<ServiceScalarRelationFilter, ServiceWhereInput>
-    user?: XOR<ProfileScalarRelationFilter, ProfileWhereInput>
+    updatedAt?: DateTimeFilter<"Booking"> | Date | string
+    publication?: XOR<PublicationNullableScalarRelationFilter, PublicationWhereInput> | null
+    client?: XOR<ProfileScalarRelationFilter, ProfileWhereInput>
   }, "id">
 
   export type BookingOrderByWithAggregationInput = {
     id?: SortOrder
-    serviceId?: SortOrder
-    userId?: SortOrder
+    publicationId?: SortOrderInput | SortOrder
+    clientId?: SortOrder
     date?: SortOrder
     status?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
     _count?: BookingCountOrderByAggregateInput
     _max?: BookingMaxOrderByAggregateInput
     _min?: BookingMinOrderByAggregateInput
@@ -10188,11 +11549,12 @@ export namespace Prisma {
     OR?: BookingScalarWhereWithAggregatesInput[]
     NOT?: BookingScalarWhereWithAggregatesInput | BookingScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Booking"> | string
-    serviceId?: StringWithAggregatesFilter<"Booking"> | string
-    userId?: StringWithAggregatesFilter<"Booking"> | string
+    publicationId?: StringNullableWithAggregatesFilter<"Booking"> | string | null
+    clientId?: StringWithAggregatesFilter<"Booking"> | string
     date?: DateTimeWithAggregatesFilter<"Booking"> | Date | string
     status?: StringWithAggregatesFilter<"Booking"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Booking"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Booking"> | Date | string
   }
 
   export type AccountCreateInput = {
@@ -10473,9 +11835,9 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutProfileInput
-    servicesOffered?: ServiceCreateNestedManyWithoutProviderInput
-    servicesRequested?: ServiceCreateNestedManyWithoutRequesterInput
-    bookings?: BookingCreateNestedManyWithoutUserInput
+    servicesOffered?: ServiceCreateNestedManyWithoutProfilesOfferingInput
+    bookings?: BookingCreateNestedManyWithoutClientInput
+    publications?: PublicationCreateNestedManyWithoutProviderInput
   }
 
   export type ProfileUncheckedCreateInput = {
@@ -10494,9 +11856,9 @@ export namespace Prisma {
     gallery?: ProfileCreategalleryInput | string[]
     createdAt?: Date | string
     updatedAt?: Date | string
-    servicesOffered?: ServiceUncheckedCreateNestedManyWithoutProviderInput
-    servicesRequested?: ServiceUncheckedCreateNestedManyWithoutRequesterInput
-    bookings?: BookingUncheckedCreateNestedManyWithoutUserInput
+    servicesOffered?: ServiceUncheckedCreateNestedManyWithoutProfilesOfferingInput
+    bookings?: BookingUncheckedCreateNestedManyWithoutClientInput
+    publications?: PublicationUncheckedCreateNestedManyWithoutProviderInput
   }
 
   export type ProfileUpdateInput = {
@@ -10515,9 +11877,9 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutProfileNestedInput
-    servicesOffered?: ServiceUpdateManyWithoutProviderNestedInput
-    servicesRequested?: ServiceUpdateManyWithoutRequesterNestedInput
-    bookings?: BookingUpdateManyWithoutUserNestedInput
+    servicesOffered?: ServiceUpdateManyWithoutProfilesOfferingNestedInput
+    bookings?: BookingUpdateManyWithoutClientNestedInput
+    publications?: PublicationUpdateManyWithoutProviderNestedInput
   }
 
   export type ProfileUncheckedUpdateInput = {
@@ -10536,9 +11898,9 @@ export namespace Prisma {
     gallery?: ProfileUpdategalleryInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    servicesOffered?: ServiceUncheckedUpdateManyWithoutProviderNestedInput
-    servicesRequested?: ServiceUncheckedUpdateManyWithoutRequesterNestedInput
-    bookings?: BookingUncheckedUpdateManyWithoutUserNestedInput
+    servicesOffered?: ServiceUncheckedUpdateManyWithoutProfilesOfferingNestedInput
+    bookings?: BookingUncheckedUpdateManyWithoutClientNestedInput
+    publications?: PublicationUncheckedUpdateManyWithoutProviderNestedInput
   }
 
   export type ProfileCreateManyInput = {
@@ -10597,73 +11959,47 @@ export namespace Prisma {
   export type ServiceCreateInput = {
     id?: string
     title: string
-    description: string
-    price?: number | null
-    category: string
-    imageUrl?: string | null
-    location?: string | null
+    description?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    provider?: ProfileCreateNestedOneWithoutServicesOfferedInput
-    requester?: ProfileCreateNestedOneWithoutServicesRequestedInput
-    bookings?: BookingCreateNestedManyWithoutServiceInput
+    profilesOffering?: ProfileCreateNestedManyWithoutServicesOfferedInput
+    publications?: PublicationCreateNestedManyWithoutServiceInput
   }
 
   export type ServiceUncheckedCreateInput = {
     id?: string
     title: string
-    description: string
-    price?: number | null
-    category: string
-    imageUrl?: string | null
-    location?: string | null
-    providerId?: string | null
-    requesterId?: string | null
+    description?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    bookings?: BookingUncheckedCreateNestedManyWithoutServiceInput
+    profilesOffering?: ProfileUncheckedCreateNestedManyWithoutServicesOfferedInput
+    publications?: PublicationUncheckedCreateNestedManyWithoutServiceInput
   }
 
   export type ServiceUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    description?: StringFieldUpdateOperationsInput | string
-    price?: NullableFloatFieldUpdateOperationsInput | number | null
-    category?: StringFieldUpdateOperationsInput | string
-    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    location?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    provider?: ProfileUpdateOneWithoutServicesOfferedNestedInput
-    requester?: ProfileUpdateOneWithoutServicesRequestedNestedInput
-    bookings?: BookingUpdateManyWithoutServiceNestedInput
+    profilesOffering?: ProfileUpdateManyWithoutServicesOfferedNestedInput
+    publications?: PublicationUpdateManyWithoutServiceNestedInput
   }
 
   export type ServiceUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    description?: StringFieldUpdateOperationsInput | string
-    price?: NullableFloatFieldUpdateOperationsInput | number | null
-    category?: StringFieldUpdateOperationsInput | string
-    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    location?: NullableStringFieldUpdateOperationsInput | string | null
-    providerId?: NullableStringFieldUpdateOperationsInput | string | null
-    requesterId?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    bookings?: BookingUncheckedUpdateManyWithoutServiceNestedInput
+    profilesOffering?: ProfileUncheckedUpdateManyWithoutServicesOfferedNestedInput
+    publications?: PublicationUncheckedUpdateManyWithoutServiceNestedInput
   }
 
   export type ServiceCreateManyInput = {
     id?: string
     title: string
-    description: string
-    price?: number | null
-    category: string
-    imageUrl?: string | null
-    location?: string | null
-    providerId?: string | null
-    requesterId?: string | null
+    description?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -10671,11 +12007,7 @@ export namespace Prisma {
   export type ServiceUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    description?: StringFieldUpdateOperationsInput | string
-    price?: NullableFloatFieldUpdateOperationsInput | number | null
-    category?: StringFieldUpdateOperationsInput | string
-    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    location?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -10683,15 +12015,116 @@ export namespace Prisma {
   export type ServiceUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    description?: StringFieldUpdateOperationsInput | string
-    price?: NullableFloatFieldUpdateOperationsInput | number | null
-    category?: StringFieldUpdateOperationsInput | string
-    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    location?: NullableStringFieldUpdateOperationsInput | string | null
-    providerId?: NullableStringFieldUpdateOperationsInput | string | null
-    requesterId?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PublicationCreateInput = {
+    id?: string
+    title: string
+    description: string
+    price?: Decimal | DecimalJsLike | number | string | null
+    priceType: $Enums.PriceType
+    images?: PublicationCreateimagesInput | string[]
+    isActive?: boolean
+    isDeleted?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    provider: ProfileCreateNestedOneWithoutPublicationsInput
+    service: ServiceCreateNestedOneWithoutPublicationsInput
+    bookings?: BookingCreateNestedManyWithoutPublicationInput
+  }
+
+  export type PublicationUncheckedCreateInput = {
+    id?: string
+    title: string
+    description: string
+    price?: Decimal | DecimalJsLike | number | string | null
+    priceType: $Enums.PriceType
+    images?: PublicationCreateimagesInput | string[]
+    isActive?: boolean
+    isDeleted?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    providerId: string
+    serviceId: string
+    bookings?: BookingUncheckedCreateNestedManyWithoutPublicationInput
+  }
+
+  export type PublicationUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    price?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    priceType?: EnumPriceTypeFieldUpdateOperationsInput | $Enums.PriceType
+    images?: PublicationUpdateimagesInput | string[]
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    provider?: ProfileUpdateOneRequiredWithoutPublicationsNestedInput
+    service?: ServiceUpdateOneRequiredWithoutPublicationsNestedInput
+    bookings?: BookingUpdateManyWithoutPublicationNestedInput
+  }
+
+  export type PublicationUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    price?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    priceType?: EnumPriceTypeFieldUpdateOperationsInput | $Enums.PriceType
+    images?: PublicationUpdateimagesInput | string[]
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    providerId?: StringFieldUpdateOperationsInput | string
+    serviceId?: StringFieldUpdateOperationsInput | string
+    bookings?: BookingUncheckedUpdateManyWithoutPublicationNestedInput
+  }
+
+  export type PublicationCreateManyInput = {
+    id?: string
+    title: string
+    description: string
+    price?: Decimal | DecimalJsLike | number | string | null
+    priceType: $Enums.PriceType
+    images?: PublicationCreateimagesInput | string[]
+    isActive?: boolean
+    isDeleted?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    providerId: string
+    serviceId: string
+  }
+
+  export type PublicationUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    price?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    priceType?: EnumPriceTypeFieldUpdateOperationsInput | $Enums.PriceType
+    images?: PublicationUpdateimagesInput | string[]
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PublicationUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    price?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    priceType?: EnumPriceTypeFieldUpdateOperationsInput | $Enums.PriceType
+    images?: PublicationUpdateimagesInput | string[]
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    providerId?: StringFieldUpdateOperationsInput | string
+    serviceId?: StringFieldUpdateOperationsInput | string
   }
 
   export type BookingCreateInput = {
@@ -10699,17 +12132,19 @@ export namespace Prisma {
     date: Date | string
     status: string
     createdAt?: Date | string
-    service: ServiceCreateNestedOneWithoutBookingsInput
-    user: ProfileCreateNestedOneWithoutBookingsInput
+    updatedAt?: Date | string
+    publication?: PublicationCreateNestedOneWithoutBookingsInput
+    client: ProfileCreateNestedOneWithoutBookingsInput
   }
 
   export type BookingUncheckedCreateInput = {
     id?: string
-    serviceId: string
-    userId: string
+    publicationId?: string | null
+    clientId: string
     date: Date | string
     status: string
     createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type BookingUpdateInput = {
@@ -10717,26 +12152,29 @@ export namespace Prisma {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    service?: ServiceUpdateOneRequiredWithoutBookingsNestedInput
-    user?: ProfileUpdateOneRequiredWithoutBookingsNestedInput
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    publication?: PublicationUpdateOneWithoutBookingsNestedInput
+    client?: ProfileUpdateOneRequiredWithoutBookingsNestedInput
   }
 
   export type BookingUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    serviceId?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
+    publicationId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientId?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type BookingCreateManyInput = {
     id?: string
-    serviceId: string
-    userId: string
+    publicationId?: string | null
+    clientId: string
     date: Date | string
     status: string
     createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type BookingUpdateManyMutationInput = {
@@ -10744,15 +12182,17 @@ export namespace Prisma {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type BookingUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
-    serviceId?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
+    publicationId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientId?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -11086,11 +12526,21 @@ export namespace Prisma {
     none?: BookingWhereInput
   }
 
+  export type PublicationListRelationFilter = {
+    every?: PublicationWhereInput
+    some?: PublicationWhereInput
+    none?: PublicationWhereInput
+  }
+
   export type ServiceOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
   export type BookingOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type PublicationOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -11156,45 +12606,28 @@ export namespace Prisma {
     _max?: NestedEnumRoleFilter<$PrismaModel>
   }
 
-  export type FloatNullableFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  export type ProfileListRelationFilter = {
+    every?: ProfileWhereInput
+    some?: ProfileWhereInput
+    none?: ProfileWhereInput
+  }
+
+  export type ProfileOrderByRelationAggregateInput = {
+    _count?: SortOrder
   }
 
   export type ServiceCountOrderByAggregateInput = {
     id?: SortOrder
     title?: SortOrder
     description?: SortOrder
-    price?: SortOrder
-    category?: SortOrder
-    imageUrl?: SortOrder
-    location?: SortOrder
-    providerId?: SortOrder
-    requesterId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-  }
-
-  export type ServiceAvgOrderByAggregateInput = {
-    price?: SortOrder
   }
 
   export type ServiceMaxOrderByAggregateInput = {
     id?: SortOrder
     title?: SortOrder
     description?: SortOrder
-    price?: SortOrder
-    category?: SortOrder
-    imageUrl?: SortOrder
-    location?: SortOrder
-    providerId?: SortOrder
-    requesterId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -11203,39 +12636,31 @@ export namespace Prisma {
     id?: SortOrder
     title?: SortOrder
     description?: SortOrder
-    price?: SortOrder
-    category?: SortOrder
-    imageUrl?: SortOrder
-    location?: SortOrder
-    providerId?: SortOrder
-    requesterId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
 
-  export type ServiceSumOrderByAggregateInput = {
-    price?: SortOrder
+  export type DecimalNullableFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel> | null
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalNullableFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
   }
 
-  export type FloatNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedFloatNullableFilter<$PrismaModel>
-    _min?: NestedFloatNullableFilter<$PrismaModel>
-    _max?: NestedFloatNullableFilter<$PrismaModel>
+  export type EnumPriceTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.PriceType | EnumPriceTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.PriceType[] | ListEnumPriceTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PriceType[] | ListEnumPriceTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumPriceTypeFilter<$PrismaModel> | $Enums.PriceType
   }
 
-  export type ServiceScalarRelationFilter = {
-    is?: ServiceWhereInput
-    isNot?: ServiceWhereInput
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
   export type ProfileScalarRelationFilter = {
@@ -11243,31 +12668,129 @@ export namespace Prisma {
     isNot?: ProfileWhereInput
   }
 
+  export type ServiceScalarRelationFilter = {
+    is?: ServiceWhereInput
+    isNot?: ServiceWhereInput
+  }
+
+  export type PublicationCountOrderByAggregateInput = {
+    id?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    price?: SortOrder
+    priceType?: SortOrder
+    images?: SortOrder
+    isActive?: SortOrder
+    isDeleted?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    providerId?: SortOrder
+    serviceId?: SortOrder
+  }
+
+  export type PublicationAvgOrderByAggregateInput = {
+    price?: SortOrder
+  }
+
+  export type PublicationMaxOrderByAggregateInput = {
+    id?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    price?: SortOrder
+    priceType?: SortOrder
+    isActive?: SortOrder
+    isDeleted?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    providerId?: SortOrder
+    serviceId?: SortOrder
+  }
+
+  export type PublicationMinOrderByAggregateInput = {
+    id?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    price?: SortOrder
+    priceType?: SortOrder
+    isActive?: SortOrder
+    isDeleted?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    providerId?: SortOrder
+    serviceId?: SortOrder
+  }
+
+  export type PublicationSumOrderByAggregateInput = {
+    price?: SortOrder
+  }
+
+  export type DecimalNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel> | null
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalNullableWithAggregatesFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedDecimalNullableFilter<$PrismaModel>
+    _sum?: NestedDecimalNullableFilter<$PrismaModel>
+    _min?: NestedDecimalNullableFilter<$PrismaModel>
+    _max?: NestedDecimalNullableFilter<$PrismaModel>
+  }
+
+  export type EnumPriceTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.PriceType | EnumPriceTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.PriceType[] | ListEnumPriceTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PriceType[] | ListEnumPriceTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumPriceTypeWithAggregatesFilter<$PrismaModel> | $Enums.PriceType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumPriceTypeFilter<$PrismaModel>
+    _max?: NestedEnumPriceTypeFilter<$PrismaModel>
+  }
+
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type PublicationNullableScalarRelationFilter = {
+    is?: PublicationWhereInput | null
+    isNot?: PublicationWhereInput | null
+  }
+
   export type BookingCountOrderByAggregateInput = {
     id?: SortOrder
-    serviceId?: SortOrder
-    userId?: SortOrder
+    publicationId?: SortOrder
+    clientId?: SortOrder
     date?: SortOrder
     status?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type BookingMaxOrderByAggregateInput = {
     id?: SortOrder
-    serviceId?: SortOrder
-    userId?: SortOrder
+    publicationId?: SortOrder
+    clientId?: SortOrder
     date?: SortOrder
     status?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type BookingMinOrderByAggregateInput = {
     id?: SortOrder
-    serviceId?: SortOrder
-    userId?: SortOrder
+    publicationId?: SortOrder
+    clientId?: SortOrder
     date?: SortOrder
     status?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type UserCreateNestedOneWithoutAccountsInput = {
@@ -11448,46 +12971,44 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
-  export type ServiceCreateNestedManyWithoutProviderInput = {
-    create?: XOR<ServiceCreateWithoutProviderInput, ServiceUncheckedCreateWithoutProviderInput> | ServiceCreateWithoutProviderInput[] | ServiceUncheckedCreateWithoutProviderInput[]
-    connectOrCreate?: ServiceCreateOrConnectWithoutProviderInput | ServiceCreateOrConnectWithoutProviderInput[]
-    createMany?: ServiceCreateManyProviderInputEnvelope
+  export type ServiceCreateNestedManyWithoutProfilesOfferingInput = {
+    create?: XOR<ServiceCreateWithoutProfilesOfferingInput, ServiceUncheckedCreateWithoutProfilesOfferingInput> | ServiceCreateWithoutProfilesOfferingInput[] | ServiceUncheckedCreateWithoutProfilesOfferingInput[]
+    connectOrCreate?: ServiceCreateOrConnectWithoutProfilesOfferingInput | ServiceCreateOrConnectWithoutProfilesOfferingInput[]
     connect?: ServiceWhereUniqueInput | ServiceWhereUniqueInput[]
   }
 
-  export type ServiceCreateNestedManyWithoutRequesterInput = {
-    create?: XOR<ServiceCreateWithoutRequesterInput, ServiceUncheckedCreateWithoutRequesterInput> | ServiceCreateWithoutRequesterInput[] | ServiceUncheckedCreateWithoutRequesterInput[]
-    connectOrCreate?: ServiceCreateOrConnectWithoutRequesterInput | ServiceCreateOrConnectWithoutRequesterInput[]
-    createMany?: ServiceCreateManyRequesterInputEnvelope
-    connect?: ServiceWhereUniqueInput | ServiceWhereUniqueInput[]
-  }
-
-  export type BookingCreateNestedManyWithoutUserInput = {
-    create?: XOR<BookingCreateWithoutUserInput, BookingUncheckedCreateWithoutUserInput> | BookingCreateWithoutUserInput[] | BookingUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: BookingCreateOrConnectWithoutUserInput | BookingCreateOrConnectWithoutUserInput[]
-    createMany?: BookingCreateManyUserInputEnvelope
+  export type BookingCreateNestedManyWithoutClientInput = {
+    create?: XOR<BookingCreateWithoutClientInput, BookingUncheckedCreateWithoutClientInput> | BookingCreateWithoutClientInput[] | BookingUncheckedCreateWithoutClientInput[]
+    connectOrCreate?: BookingCreateOrConnectWithoutClientInput | BookingCreateOrConnectWithoutClientInput[]
+    createMany?: BookingCreateManyClientInputEnvelope
     connect?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
   }
 
-  export type ServiceUncheckedCreateNestedManyWithoutProviderInput = {
-    create?: XOR<ServiceCreateWithoutProviderInput, ServiceUncheckedCreateWithoutProviderInput> | ServiceCreateWithoutProviderInput[] | ServiceUncheckedCreateWithoutProviderInput[]
-    connectOrCreate?: ServiceCreateOrConnectWithoutProviderInput | ServiceCreateOrConnectWithoutProviderInput[]
-    createMany?: ServiceCreateManyProviderInputEnvelope
+  export type PublicationCreateNestedManyWithoutProviderInput = {
+    create?: XOR<PublicationCreateWithoutProviderInput, PublicationUncheckedCreateWithoutProviderInput> | PublicationCreateWithoutProviderInput[] | PublicationUncheckedCreateWithoutProviderInput[]
+    connectOrCreate?: PublicationCreateOrConnectWithoutProviderInput | PublicationCreateOrConnectWithoutProviderInput[]
+    createMany?: PublicationCreateManyProviderInputEnvelope
+    connect?: PublicationWhereUniqueInput | PublicationWhereUniqueInput[]
+  }
+
+  export type ServiceUncheckedCreateNestedManyWithoutProfilesOfferingInput = {
+    create?: XOR<ServiceCreateWithoutProfilesOfferingInput, ServiceUncheckedCreateWithoutProfilesOfferingInput> | ServiceCreateWithoutProfilesOfferingInput[] | ServiceUncheckedCreateWithoutProfilesOfferingInput[]
+    connectOrCreate?: ServiceCreateOrConnectWithoutProfilesOfferingInput | ServiceCreateOrConnectWithoutProfilesOfferingInput[]
     connect?: ServiceWhereUniqueInput | ServiceWhereUniqueInput[]
   }
 
-  export type ServiceUncheckedCreateNestedManyWithoutRequesterInput = {
-    create?: XOR<ServiceCreateWithoutRequesterInput, ServiceUncheckedCreateWithoutRequesterInput> | ServiceCreateWithoutRequesterInput[] | ServiceUncheckedCreateWithoutRequesterInput[]
-    connectOrCreate?: ServiceCreateOrConnectWithoutRequesterInput | ServiceCreateOrConnectWithoutRequesterInput[]
-    createMany?: ServiceCreateManyRequesterInputEnvelope
-    connect?: ServiceWhereUniqueInput | ServiceWhereUniqueInput[]
-  }
-
-  export type BookingUncheckedCreateNestedManyWithoutUserInput = {
-    create?: XOR<BookingCreateWithoutUserInput, BookingUncheckedCreateWithoutUserInput> | BookingCreateWithoutUserInput[] | BookingUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: BookingCreateOrConnectWithoutUserInput | BookingCreateOrConnectWithoutUserInput[]
-    createMany?: BookingCreateManyUserInputEnvelope
+  export type BookingUncheckedCreateNestedManyWithoutClientInput = {
+    create?: XOR<BookingCreateWithoutClientInput, BookingUncheckedCreateWithoutClientInput> | BookingCreateWithoutClientInput[] | BookingUncheckedCreateWithoutClientInput[]
+    connectOrCreate?: BookingCreateOrConnectWithoutClientInput | BookingCreateOrConnectWithoutClientInput[]
+    createMany?: BookingCreateManyClientInputEnvelope
     connect?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
+  }
+
+  export type PublicationUncheckedCreateNestedManyWithoutProviderInput = {
+    create?: XOR<PublicationCreateWithoutProviderInput, PublicationUncheckedCreateWithoutProviderInput> | PublicationCreateWithoutProviderInput[] | PublicationUncheckedCreateWithoutProviderInput[]
+    connectOrCreate?: PublicationCreateOrConnectWithoutProviderInput | PublicationCreateOrConnectWithoutProviderInput[]
+    createMany?: PublicationCreateManyProviderInputEnvelope
+    connect?: PublicationWhereUniqueInput | PublicationWhereUniqueInput[]
   }
 
   export type EnumRoleFieldUpdateOperationsInput = {
@@ -11507,176 +13028,267 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutProfileInput, UserUpdateWithoutProfileInput>, UserUncheckedUpdateWithoutProfileInput>
   }
 
-  export type ServiceUpdateManyWithoutProviderNestedInput = {
-    create?: XOR<ServiceCreateWithoutProviderInput, ServiceUncheckedCreateWithoutProviderInput> | ServiceCreateWithoutProviderInput[] | ServiceUncheckedCreateWithoutProviderInput[]
-    connectOrCreate?: ServiceCreateOrConnectWithoutProviderInput | ServiceCreateOrConnectWithoutProviderInput[]
-    upsert?: ServiceUpsertWithWhereUniqueWithoutProviderInput | ServiceUpsertWithWhereUniqueWithoutProviderInput[]
-    createMany?: ServiceCreateManyProviderInputEnvelope
+  export type ServiceUpdateManyWithoutProfilesOfferingNestedInput = {
+    create?: XOR<ServiceCreateWithoutProfilesOfferingInput, ServiceUncheckedCreateWithoutProfilesOfferingInput> | ServiceCreateWithoutProfilesOfferingInput[] | ServiceUncheckedCreateWithoutProfilesOfferingInput[]
+    connectOrCreate?: ServiceCreateOrConnectWithoutProfilesOfferingInput | ServiceCreateOrConnectWithoutProfilesOfferingInput[]
+    upsert?: ServiceUpsertWithWhereUniqueWithoutProfilesOfferingInput | ServiceUpsertWithWhereUniqueWithoutProfilesOfferingInput[]
     set?: ServiceWhereUniqueInput | ServiceWhereUniqueInput[]
     disconnect?: ServiceWhereUniqueInput | ServiceWhereUniqueInput[]
     delete?: ServiceWhereUniqueInput | ServiceWhereUniqueInput[]
     connect?: ServiceWhereUniqueInput | ServiceWhereUniqueInput[]
-    update?: ServiceUpdateWithWhereUniqueWithoutProviderInput | ServiceUpdateWithWhereUniqueWithoutProviderInput[]
-    updateMany?: ServiceUpdateManyWithWhereWithoutProviderInput | ServiceUpdateManyWithWhereWithoutProviderInput[]
+    update?: ServiceUpdateWithWhereUniqueWithoutProfilesOfferingInput | ServiceUpdateWithWhereUniqueWithoutProfilesOfferingInput[]
+    updateMany?: ServiceUpdateManyWithWhereWithoutProfilesOfferingInput | ServiceUpdateManyWithWhereWithoutProfilesOfferingInput[]
     deleteMany?: ServiceScalarWhereInput | ServiceScalarWhereInput[]
   }
 
-  export type ServiceUpdateManyWithoutRequesterNestedInput = {
-    create?: XOR<ServiceCreateWithoutRequesterInput, ServiceUncheckedCreateWithoutRequesterInput> | ServiceCreateWithoutRequesterInput[] | ServiceUncheckedCreateWithoutRequesterInput[]
-    connectOrCreate?: ServiceCreateOrConnectWithoutRequesterInput | ServiceCreateOrConnectWithoutRequesterInput[]
-    upsert?: ServiceUpsertWithWhereUniqueWithoutRequesterInput | ServiceUpsertWithWhereUniqueWithoutRequesterInput[]
-    createMany?: ServiceCreateManyRequesterInputEnvelope
+  export type BookingUpdateManyWithoutClientNestedInput = {
+    create?: XOR<BookingCreateWithoutClientInput, BookingUncheckedCreateWithoutClientInput> | BookingCreateWithoutClientInput[] | BookingUncheckedCreateWithoutClientInput[]
+    connectOrCreate?: BookingCreateOrConnectWithoutClientInput | BookingCreateOrConnectWithoutClientInput[]
+    upsert?: BookingUpsertWithWhereUniqueWithoutClientInput | BookingUpsertWithWhereUniqueWithoutClientInput[]
+    createMany?: BookingCreateManyClientInputEnvelope
+    set?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
+    disconnect?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
+    delete?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
+    connect?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
+    update?: BookingUpdateWithWhereUniqueWithoutClientInput | BookingUpdateWithWhereUniqueWithoutClientInput[]
+    updateMany?: BookingUpdateManyWithWhereWithoutClientInput | BookingUpdateManyWithWhereWithoutClientInput[]
+    deleteMany?: BookingScalarWhereInput | BookingScalarWhereInput[]
+  }
+
+  export type PublicationUpdateManyWithoutProviderNestedInput = {
+    create?: XOR<PublicationCreateWithoutProviderInput, PublicationUncheckedCreateWithoutProviderInput> | PublicationCreateWithoutProviderInput[] | PublicationUncheckedCreateWithoutProviderInput[]
+    connectOrCreate?: PublicationCreateOrConnectWithoutProviderInput | PublicationCreateOrConnectWithoutProviderInput[]
+    upsert?: PublicationUpsertWithWhereUniqueWithoutProviderInput | PublicationUpsertWithWhereUniqueWithoutProviderInput[]
+    createMany?: PublicationCreateManyProviderInputEnvelope
+    set?: PublicationWhereUniqueInput | PublicationWhereUniqueInput[]
+    disconnect?: PublicationWhereUniqueInput | PublicationWhereUniqueInput[]
+    delete?: PublicationWhereUniqueInput | PublicationWhereUniqueInput[]
+    connect?: PublicationWhereUniqueInput | PublicationWhereUniqueInput[]
+    update?: PublicationUpdateWithWhereUniqueWithoutProviderInput | PublicationUpdateWithWhereUniqueWithoutProviderInput[]
+    updateMany?: PublicationUpdateManyWithWhereWithoutProviderInput | PublicationUpdateManyWithWhereWithoutProviderInput[]
+    deleteMany?: PublicationScalarWhereInput | PublicationScalarWhereInput[]
+  }
+
+  export type ServiceUncheckedUpdateManyWithoutProfilesOfferingNestedInput = {
+    create?: XOR<ServiceCreateWithoutProfilesOfferingInput, ServiceUncheckedCreateWithoutProfilesOfferingInput> | ServiceCreateWithoutProfilesOfferingInput[] | ServiceUncheckedCreateWithoutProfilesOfferingInput[]
+    connectOrCreate?: ServiceCreateOrConnectWithoutProfilesOfferingInput | ServiceCreateOrConnectWithoutProfilesOfferingInput[]
+    upsert?: ServiceUpsertWithWhereUniqueWithoutProfilesOfferingInput | ServiceUpsertWithWhereUniqueWithoutProfilesOfferingInput[]
     set?: ServiceWhereUniqueInput | ServiceWhereUniqueInput[]
     disconnect?: ServiceWhereUniqueInput | ServiceWhereUniqueInput[]
     delete?: ServiceWhereUniqueInput | ServiceWhereUniqueInput[]
     connect?: ServiceWhereUniqueInput | ServiceWhereUniqueInput[]
-    update?: ServiceUpdateWithWhereUniqueWithoutRequesterInput | ServiceUpdateWithWhereUniqueWithoutRequesterInput[]
-    updateMany?: ServiceUpdateManyWithWhereWithoutRequesterInput | ServiceUpdateManyWithWhereWithoutRequesterInput[]
+    update?: ServiceUpdateWithWhereUniqueWithoutProfilesOfferingInput | ServiceUpdateWithWhereUniqueWithoutProfilesOfferingInput[]
+    updateMany?: ServiceUpdateManyWithWhereWithoutProfilesOfferingInput | ServiceUpdateManyWithWhereWithoutProfilesOfferingInput[]
     deleteMany?: ServiceScalarWhereInput | ServiceScalarWhereInput[]
   }
 
-  export type BookingUpdateManyWithoutUserNestedInput = {
-    create?: XOR<BookingCreateWithoutUserInput, BookingUncheckedCreateWithoutUserInput> | BookingCreateWithoutUserInput[] | BookingUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: BookingCreateOrConnectWithoutUserInput | BookingCreateOrConnectWithoutUserInput[]
-    upsert?: BookingUpsertWithWhereUniqueWithoutUserInput | BookingUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: BookingCreateManyUserInputEnvelope
+  export type BookingUncheckedUpdateManyWithoutClientNestedInput = {
+    create?: XOR<BookingCreateWithoutClientInput, BookingUncheckedCreateWithoutClientInput> | BookingCreateWithoutClientInput[] | BookingUncheckedCreateWithoutClientInput[]
+    connectOrCreate?: BookingCreateOrConnectWithoutClientInput | BookingCreateOrConnectWithoutClientInput[]
+    upsert?: BookingUpsertWithWhereUniqueWithoutClientInput | BookingUpsertWithWhereUniqueWithoutClientInput[]
+    createMany?: BookingCreateManyClientInputEnvelope
     set?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
     disconnect?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
     delete?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
     connect?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
-    update?: BookingUpdateWithWhereUniqueWithoutUserInput | BookingUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: BookingUpdateManyWithWhereWithoutUserInput | BookingUpdateManyWithWhereWithoutUserInput[]
+    update?: BookingUpdateWithWhereUniqueWithoutClientInput | BookingUpdateWithWhereUniqueWithoutClientInput[]
+    updateMany?: BookingUpdateManyWithWhereWithoutClientInput | BookingUpdateManyWithWhereWithoutClientInput[]
     deleteMany?: BookingScalarWhereInput | BookingScalarWhereInput[]
   }
 
-  export type ServiceUncheckedUpdateManyWithoutProviderNestedInput = {
-    create?: XOR<ServiceCreateWithoutProviderInput, ServiceUncheckedCreateWithoutProviderInput> | ServiceCreateWithoutProviderInput[] | ServiceUncheckedCreateWithoutProviderInput[]
-    connectOrCreate?: ServiceCreateOrConnectWithoutProviderInput | ServiceCreateOrConnectWithoutProviderInput[]
-    upsert?: ServiceUpsertWithWhereUniqueWithoutProviderInput | ServiceUpsertWithWhereUniqueWithoutProviderInput[]
-    createMany?: ServiceCreateManyProviderInputEnvelope
-    set?: ServiceWhereUniqueInput | ServiceWhereUniqueInput[]
-    disconnect?: ServiceWhereUniqueInput | ServiceWhereUniqueInput[]
-    delete?: ServiceWhereUniqueInput | ServiceWhereUniqueInput[]
-    connect?: ServiceWhereUniqueInput | ServiceWhereUniqueInput[]
-    update?: ServiceUpdateWithWhereUniqueWithoutProviderInput | ServiceUpdateWithWhereUniqueWithoutProviderInput[]
-    updateMany?: ServiceUpdateManyWithWhereWithoutProviderInput | ServiceUpdateManyWithWhereWithoutProviderInput[]
-    deleteMany?: ServiceScalarWhereInput | ServiceScalarWhereInput[]
+  export type PublicationUncheckedUpdateManyWithoutProviderNestedInput = {
+    create?: XOR<PublicationCreateWithoutProviderInput, PublicationUncheckedCreateWithoutProviderInput> | PublicationCreateWithoutProviderInput[] | PublicationUncheckedCreateWithoutProviderInput[]
+    connectOrCreate?: PublicationCreateOrConnectWithoutProviderInput | PublicationCreateOrConnectWithoutProviderInput[]
+    upsert?: PublicationUpsertWithWhereUniqueWithoutProviderInput | PublicationUpsertWithWhereUniqueWithoutProviderInput[]
+    createMany?: PublicationCreateManyProviderInputEnvelope
+    set?: PublicationWhereUniqueInput | PublicationWhereUniqueInput[]
+    disconnect?: PublicationWhereUniqueInput | PublicationWhereUniqueInput[]
+    delete?: PublicationWhereUniqueInput | PublicationWhereUniqueInput[]
+    connect?: PublicationWhereUniqueInput | PublicationWhereUniqueInput[]
+    update?: PublicationUpdateWithWhereUniqueWithoutProviderInput | PublicationUpdateWithWhereUniqueWithoutProviderInput[]
+    updateMany?: PublicationUpdateManyWithWhereWithoutProviderInput | PublicationUpdateManyWithWhereWithoutProviderInput[]
+    deleteMany?: PublicationScalarWhereInput | PublicationScalarWhereInput[]
   }
 
-  export type ServiceUncheckedUpdateManyWithoutRequesterNestedInput = {
-    create?: XOR<ServiceCreateWithoutRequesterInput, ServiceUncheckedCreateWithoutRequesterInput> | ServiceCreateWithoutRequesterInput[] | ServiceUncheckedCreateWithoutRequesterInput[]
-    connectOrCreate?: ServiceCreateOrConnectWithoutRequesterInput | ServiceCreateOrConnectWithoutRequesterInput[]
-    upsert?: ServiceUpsertWithWhereUniqueWithoutRequesterInput | ServiceUpsertWithWhereUniqueWithoutRequesterInput[]
-    createMany?: ServiceCreateManyRequesterInputEnvelope
-    set?: ServiceWhereUniqueInput | ServiceWhereUniqueInput[]
-    disconnect?: ServiceWhereUniqueInput | ServiceWhereUniqueInput[]
-    delete?: ServiceWhereUniqueInput | ServiceWhereUniqueInput[]
-    connect?: ServiceWhereUniqueInput | ServiceWhereUniqueInput[]
-    update?: ServiceUpdateWithWhereUniqueWithoutRequesterInput | ServiceUpdateWithWhereUniqueWithoutRequesterInput[]
-    updateMany?: ServiceUpdateManyWithWhereWithoutRequesterInput | ServiceUpdateManyWithWhereWithoutRequesterInput[]
-    deleteMany?: ServiceScalarWhereInput | ServiceScalarWhereInput[]
+  export type ProfileCreateNestedManyWithoutServicesOfferedInput = {
+    create?: XOR<ProfileCreateWithoutServicesOfferedInput, ProfileUncheckedCreateWithoutServicesOfferedInput> | ProfileCreateWithoutServicesOfferedInput[] | ProfileUncheckedCreateWithoutServicesOfferedInput[]
+    connectOrCreate?: ProfileCreateOrConnectWithoutServicesOfferedInput | ProfileCreateOrConnectWithoutServicesOfferedInput[]
+    connect?: ProfileWhereUniqueInput | ProfileWhereUniqueInput[]
   }
 
-  export type BookingUncheckedUpdateManyWithoutUserNestedInput = {
-    create?: XOR<BookingCreateWithoutUserInput, BookingUncheckedCreateWithoutUserInput> | BookingCreateWithoutUserInput[] | BookingUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: BookingCreateOrConnectWithoutUserInput | BookingCreateOrConnectWithoutUserInput[]
-    upsert?: BookingUpsertWithWhereUniqueWithoutUserInput | BookingUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: BookingCreateManyUserInputEnvelope
-    set?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
-    disconnect?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
-    delete?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
-    connect?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
-    update?: BookingUpdateWithWhereUniqueWithoutUserInput | BookingUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: BookingUpdateManyWithWhereWithoutUserInput | BookingUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: BookingScalarWhereInput | BookingScalarWhereInput[]
+  export type PublicationCreateNestedManyWithoutServiceInput = {
+    create?: XOR<PublicationCreateWithoutServiceInput, PublicationUncheckedCreateWithoutServiceInput> | PublicationCreateWithoutServiceInput[] | PublicationUncheckedCreateWithoutServiceInput[]
+    connectOrCreate?: PublicationCreateOrConnectWithoutServiceInput | PublicationCreateOrConnectWithoutServiceInput[]
+    createMany?: PublicationCreateManyServiceInputEnvelope
+    connect?: PublicationWhereUniqueInput | PublicationWhereUniqueInput[]
   }
 
-  export type ProfileCreateNestedOneWithoutServicesOfferedInput = {
-    create?: XOR<ProfileCreateWithoutServicesOfferedInput, ProfileUncheckedCreateWithoutServicesOfferedInput>
-    connectOrCreate?: ProfileCreateOrConnectWithoutServicesOfferedInput
+  export type ProfileUncheckedCreateNestedManyWithoutServicesOfferedInput = {
+    create?: XOR<ProfileCreateWithoutServicesOfferedInput, ProfileUncheckedCreateWithoutServicesOfferedInput> | ProfileCreateWithoutServicesOfferedInput[] | ProfileUncheckedCreateWithoutServicesOfferedInput[]
+    connectOrCreate?: ProfileCreateOrConnectWithoutServicesOfferedInput | ProfileCreateOrConnectWithoutServicesOfferedInput[]
+    connect?: ProfileWhereUniqueInput | ProfileWhereUniqueInput[]
+  }
+
+  export type PublicationUncheckedCreateNestedManyWithoutServiceInput = {
+    create?: XOR<PublicationCreateWithoutServiceInput, PublicationUncheckedCreateWithoutServiceInput> | PublicationCreateWithoutServiceInput[] | PublicationUncheckedCreateWithoutServiceInput[]
+    connectOrCreate?: PublicationCreateOrConnectWithoutServiceInput | PublicationCreateOrConnectWithoutServiceInput[]
+    createMany?: PublicationCreateManyServiceInputEnvelope
+    connect?: PublicationWhereUniqueInput | PublicationWhereUniqueInput[]
+  }
+
+  export type ProfileUpdateManyWithoutServicesOfferedNestedInput = {
+    create?: XOR<ProfileCreateWithoutServicesOfferedInput, ProfileUncheckedCreateWithoutServicesOfferedInput> | ProfileCreateWithoutServicesOfferedInput[] | ProfileUncheckedCreateWithoutServicesOfferedInput[]
+    connectOrCreate?: ProfileCreateOrConnectWithoutServicesOfferedInput | ProfileCreateOrConnectWithoutServicesOfferedInput[]
+    upsert?: ProfileUpsertWithWhereUniqueWithoutServicesOfferedInput | ProfileUpsertWithWhereUniqueWithoutServicesOfferedInput[]
+    set?: ProfileWhereUniqueInput | ProfileWhereUniqueInput[]
+    disconnect?: ProfileWhereUniqueInput | ProfileWhereUniqueInput[]
+    delete?: ProfileWhereUniqueInput | ProfileWhereUniqueInput[]
+    connect?: ProfileWhereUniqueInput | ProfileWhereUniqueInput[]
+    update?: ProfileUpdateWithWhereUniqueWithoutServicesOfferedInput | ProfileUpdateWithWhereUniqueWithoutServicesOfferedInput[]
+    updateMany?: ProfileUpdateManyWithWhereWithoutServicesOfferedInput | ProfileUpdateManyWithWhereWithoutServicesOfferedInput[]
+    deleteMany?: ProfileScalarWhereInput | ProfileScalarWhereInput[]
+  }
+
+  export type PublicationUpdateManyWithoutServiceNestedInput = {
+    create?: XOR<PublicationCreateWithoutServiceInput, PublicationUncheckedCreateWithoutServiceInput> | PublicationCreateWithoutServiceInput[] | PublicationUncheckedCreateWithoutServiceInput[]
+    connectOrCreate?: PublicationCreateOrConnectWithoutServiceInput | PublicationCreateOrConnectWithoutServiceInput[]
+    upsert?: PublicationUpsertWithWhereUniqueWithoutServiceInput | PublicationUpsertWithWhereUniqueWithoutServiceInput[]
+    createMany?: PublicationCreateManyServiceInputEnvelope
+    set?: PublicationWhereUniqueInput | PublicationWhereUniqueInput[]
+    disconnect?: PublicationWhereUniqueInput | PublicationWhereUniqueInput[]
+    delete?: PublicationWhereUniqueInput | PublicationWhereUniqueInput[]
+    connect?: PublicationWhereUniqueInput | PublicationWhereUniqueInput[]
+    update?: PublicationUpdateWithWhereUniqueWithoutServiceInput | PublicationUpdateWithWhereUniqueWithoutServiceInput[]
+    updateMany?: PublicationUpdateManyWithWhereWithoutServiceInput | PublicationUpdateManyWithWhereWithoutServiceInput[]
+    deleteMany?: PublicationScalarWhereInput | PublicationScalarWhereInput[]
+  }
+
+  export type ProfileUncheckedUpdateManyWithoutServicesOfferedNestedInput = {
+    create?: XOR<ProfileCreateWithoutServicesOfferedInput, ProfileUncheckedCreateWithoutServicesOfferedInput> | ProfileCreateWithoutServicesOfferedInput[] | ProfileUncheckedCreateWithoutServicesOfferedInput[]
+    connectOrCreate?: ProfileCreateOrConnectWithoutServicesOfferedInput | ProfileCreateOrConnectWithoutServicesOfferedInput[]
+    upsert?: ProfileUpsertWithWhereUniqueWithoutServicesOfferedInput | ProfileUpsertWithWhereUniqueWithoutServicesOfferedInput[]
+    set?: ProfileWhereUniqueInput | ProfileWhereUniqueInput[]
+    disconnect?: ProfileWhereUniqueInput | ProfileWhereUniqueInput[]
+    delete?: ProfileWhereUniqueInput | ProfileWhereUniqueInput[]
+    connect?: ProfileWhereUniqueInput | ProfileWhereUniqueInput[]
+    update?: ProfileUpdateWithWhereUniqueWithoutServicesOfferedInput | ProfileUpdateWithWhereUniqueWithoutServicesOfferedInput[]
+    updateMany?: ProfileUpdateManyWithWhereWithoutServicesOfferedInput | ProfileUpdateManyWithWhereWithoutServicesOfferedInput[]
+    deleteMany?: ProfileScalarWhereInput | ProfileScalarWhereInput[]
+  }
+
+  export type PublicationUncheckedUpdateManyWithoutServiceNestedInput = {
+    create?: XOR<PublicationCreateWithoutServiceInput, PublicationUncheckedCreateWithoutServiceInput> | PublicationCreateWithoutServiceInput[] | PublicationUncheckedCreateWithoutServiceInput[]
+    connectOrCreate?: PublicationCreateOrConnectWithoutServiceInput | PublicationCreateOrConnectWithoutServiceInput[]
+    upsert?: PublicationUpsertWithWhereUniqueWithoutServiceInput | PublicationUpsertWithWhereUniqueWithoutServiceInput[]
+    createMany?: PublicationCreateManyServiceInputEnvelope
+    set?: PublicationWhereUniqueInput | PublicationWhereUniqueInput[]
+    disconnect?: PublicationWhereUniqueInput | PublicationWhereUniqueInput[]
+    delete?: PublicationWhereUniqueInput | PublicationWhereUniqueInput[]
+    connect?: PublicationWhereUniqueInput | PublicationWhereUniqueInput[]
+    update?: PublicationUpdateWithWhereUniqueWithoutServiceInput | PublicationUpdateWithWhereUniqueWithoutServiceInput[]
+    updateMany?: PublicationUpdateManyWithWhereWithoutServiceInput | PublicationUpdateManyWithWhereWithoutServiceInput[]
+    deleteMany?: PublicationScalarWhereInput | PublicationScalarWhereInput[]
+  }
+
+  export type PublicationCreateimagesInput = {
+    set: string[]
+  }
+
+  export type ProfileCreateNestedOneWithoutPublicationsInput = {
+    create?: XOR<ProfileCreateWithoutPublicationsInput, ProfileUncheckedCreateWithoutPublicationsInput>
+    connectOrCreate?: ProfileCreateOrConnectWithoutPublicationsInput
     connect?: ProfileWhereUniqueInput
   }
 
-  export type ProfileCreateNestedOneWithoutServicesRequestedInput = {
-    create?: XOR<ProfileCreateWithoutServicesRequestedInput, ProfileUncheckedCreateWithoutServicesRequestedInput>
-    connectOrCreate?: ProfileCreateOrConnectWithoutServicesRequestedInput
-    connect?: ProfileWhereUniqueInput
-  }
-
-  export type BookingCreateNestedManyWithoutServiceInput = {
-    create?: XOR<BookingCreateWithoutServiceInput, BookingUncheckedCreateWithoutServiceInput> | BookingCreateWithoutServiceInput[] | BookingUncheckedCreateWithoutServiceInput[]
-    connectOrCreate?: BookingCreateOrConnectWithoutServiceInput | BookingCreateOrConnectWithoutServiceInput[]
-    createMany?: BookingCreateManyServiceInputEnvelope
-    connect?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
-  }
-
-  export type BookingUncheckedCreateNestedManyWithoutServiceInput = {
-    create?: XOR<BookingCreateWithoutServiceInput, BookingUncheckedCreateWithoutServiceInput> | BookingCreateWithoutServiceInput[] | BookingUncheckedCreateWithoutServiceInput[]
-    connectOrCreate?: BookingCreateOrConnectWithoutServiceInput | BookingCreateOrConnectWithoutServiceInput[]
-    createMany?: BookingCreateManyServiceInputEnvelope
-    connect?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
-  }
-
-  export type NullableFloatFieldUpdateOperationsInput = {
-    set?: number | null
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
-  }
-
-  export type ProfileUpdateOneWithoutServicesOfferedNestedInput = {
-    create?: XOR<ProfileCreateWithoutServicesOfferedInput, ProfileUncheckedCreateWithoutServicesOfferedInput>
-    connectOrCreate?: ProfileCreateOrConnectWithoutServicesOfferedInput
-    upsert?: ProfileUpsertWithoutServicesOfferedInput
-    disconnect?: ProfileWhereInput | boolean
-    delete?: ProfileWhereInput | boolean
-    connect?: ProfileWhereUniqueInput
-    update?: XOR<XOR<ProfileUpdateToOneWithWhereWithoutServicesOfferedInput, ProfileUpdateWithoutServicesOfferedInput>, ProfileUncheckedUpdateWithoutServicesOfferedInput>
-  }
-
-  export type ProfileUpdateOneWithoutServicesRequestedNestedInput = {
-    create?: XOR<ProfileCreateWithoutServicesRequestedInput, ProfileUncheckedCreateWithoutServicesRequestedInput>
-    connectOrCreate?: ProfileCreateOrConnectWithoutServicesRequestedInput
-    upsert?: ProfileUpsertWithoutServicesRequestedInput
-    disconnect?: ProfileWhereInput | boolean
-    delete?: ProfileWhereInput | boolean
-    connect?: ProfileWhereUniqueInput
-    update?: XOR<XOR<ProfileUpdateToOneWithWhereWithoutServicesRequestedInput, ProfileUpdateWithoutServicesRequestedInput>, ProfileUncheckedUpdateWithoutServicesRequestedInput>
-  }
-
-  export type BookingUpdateManyWithoutServiceNestedInput = {
-    create?: XOR<BookingCreateWithoutServiceInput, BookingUncheckedCreateWithoutServiceInput> | BookingCreateWithoutServiceInput[] | BookingUncheckedCreateWithoutServiceInput[]
-    connectOrCreate?: BookingCreateOrConnectWithoutServiceInput | BookingCreateOrConnectWithoutServiceInput[]
-    upsert?: BookingUpsertWithWhereUniqueWithoutServiceInput | BookingUpsertWithWhereUniqueWithoutServiceInput[]
-    createMany?: BookingCreateManyServiceInputEnvelope
-    set?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
-    disconnect?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
-    delete?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
-    connect?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
-    update?: BookingUpdateWithWhereUniqueWithoutServiceInput | BookingUpdateWithWhereUniqueWithoutServiceInput[]
-    updateMany?: BookingUpdateManyWithWhereWithoutServiceInput | BookingUpdateManyWithWhereWithoutServiceInput[]
-    deleteMany?: BookingScalarWhereInput | BookingScalarWhereInput[]
-  }
-
-  export type BookingUncheckedUpdateManyWithoutServiceNestedInput = {
-    create?: XOR<BookingCreateWithoutServiceInput, BookingUncheckedCreateWithoutServiceInput> | BookingCreateWithoutServiceInput[] | BookingUncheckedCreateWithoutServiceInput[]
-    connectOrCreate?: BookingCreateOrConnectWithoutServiceInput | BookingCreateOrConnectWithoutServiceInput[]
-    upsert?: BookingUpsertWithWhereUniqueWithoutServiceInput | BookingUpsertWithWhereUniqueWithoutServiceInput[]
-    createMany?: BookingCreateManyServiceInputEnvelope
-    set?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
-    disconnect?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
-    delete?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
-    connect?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
-    update?: BookingUpdateWithWhereUniqueWithoutServiceInput | BookingUpdateWithWhereUniqueWithoutServiceInput[]
-    updateMany?: BookingUpdateManyWithWhereWithoutServiceInput | BookingUpdateManyWithWhereWithoutServiceInput[]
-    deleteMany?: BookingScalarWhereInput | BookingScalarWhereInput[]
-  }
-
-  export type ServiceCreateNestedOneWithoutBookingsInput = {
-    create?: XOR<ServiceCreateWithoutBookingsInput, ServiceUncheckedCreateWithoutBookingsInput>
-    connectOrCreate?: ServiceCreateOrConnectWithoutBookingsInput
+  export type ServiceCreateNestedOneWithoutPublicationsInput = {
+    create?: XOR<ServiceCreateWithoutPublicationsInput, ServiceUncheckedCreateWithoutPublicationsInput>
+    connectOrCreate?: ServiceCreateOrConnectWithoutPublicationsInput
     connect?: ServiceWhereUniqueInput
+  }
+
+  export type BookingCreateNestedManyWithoutPublicationInput = {
+    create?: XOR<BookingCreateWithoutPublicationInput, BookingUncheckedCreateWithoutPublicationInput> | BookingCreateWithoutPublicationInput[] | BookingUncheckedCreateWithoutPublicationInput[]
+    connectOrCreate?: BookingCreateOrConnectWithoutPublicationInput | BookingCreateOrConnectWithoutPublicationInput[]
+    createMany?: BookingCreateManyPublicationInputEnvelope
+    connect?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
+  }
+
+  export type BookingUncheckedCreateNestedManyWithoutPublicationInput = {
+    create?: XOR<BookingCreateWithoutPublicationInput, BookingUncheckedCreateWithoutPublicationInput> | BookingCreateWithoutPublicationInput[] | BookingUncheckedCreateWithoutPublicationInput[]
+    connectOrCreate?: BookingCreateOrConnectWithoutPublicationInput | BookingCreateOrConnectWithoutPublicationInput[]
+    createMany?: BookingCreateManyPublicationInputEnvelope
+    connect?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
+  }
+
+  export type NullableDecimalFieldUpdateOperationsInput = {
+    set?: Decimal | DecimalJsLike | number | string | null
+    increment?: Decimal | DecimalJsLike | number | string
+    decrement?: Decimal | DecimalJsLike | number | string
+    multiply?: Decimal | DecimalJsLike | number | string
+    divide?: Decimal | DecimalJsLike | number | string
+  }
+
+  export type EnumPriceTypeFieldUpdateOperationsInput = {
+    set?: $Enums.PriceType
+  }
+
+  export type PublicationUpdateimagesInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
+  }
+
+  export type ProfileUpdateOneRequiredWithoutPublicationsNestedInput = {
+    create?: XOR<ProfileCreateWithoutPublicationsInput, ProfileUncheckedCreateWithoutPublicationsInput>
+    connectOrCreate?: ProfileCreateOrConnectWithoutPublicationsInput
+    upsert?: ProfileUpsertWithoutPublicationsInput
+    connect?: ProfileWhereUniqueInput
+    update?: XOR<XOR<ProfileUpdateToOneWithWhereWithoutPublicationsInput, ProfileUpdateWithoutPublicationsInput>, ProfileUncheckedUpdateWithoutPublicationsInput>
+  }
+
+  export type ServiceUpdateOneRequiredWithoutPublicationsNestedInput = {
+    create?: XOR<ServiceCreateWithoutPublicationsInput, ServiceUncheckedCreateWithoutPublicationsInput>
+    connectOrCreate?: ServiceCreateOrConnectWithoutPublicationsInput
+    upsert?: ServiceUpsertWithoutPublicationsInput
+    connect?: ServiceWhereUniqueInput
+    update?: XOR<XOR<ServiceUpdateToOneWithWhereWithoutPublicationsInput, ServiceUpdateWithoutPublicationsInput>, ServiceUncheckedUpdateWithoutPublicationsInput>
+  }
+
+  export type BookingUpdateManyWithoutPublicationNestedInput = {
+    create?: XOR<BookingCreateWithoutPublicationInput, BookingUncheckedCreateWithoutPublicationInput> | BookingCreateWithoutPublicationInput[] | BookingUncheckedCreateWithoutPublicationInput[]
+    connectOrCreate?: BookingCreateOrConnectWithoutPublicationInput | BookingCreateOrConnectWithoutPublicationInput[]
+    upsert?: BookingUpsertWithWhereUniqueWithoutPublicationInput | BookingUpsertWithWhereUniqueWithoutPublicationInput[]
+    createMany?: BookingCreateManyPublicationInputEnvelope
+    set?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
+    disconnect?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
+    delete?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
+    connect?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
+    update?: BookingUpdateWithWhereUniqueWithoutPublicationInput | BookingUpdateWithWhereUniqueWithoutPublicationInput[]
+    updateMany?: BookingUpdateManyWithWhereWithoutPublicationInput | BookingUpdateManyWithWhereWithoutPublicationInput[]
+    deleteMany?: BookingScalarWhereInput | BookingScalarWhereInput[]
+  }
+
+  export type BookingUncheckedUpdateManyWithoutPublicationNestedInput = {
+    create?: XOR<BookingCreateWithoutPublicationInput, BookingUncheckedCreateWithoutPublicationInput> | BookingCreateWithoutPublicationInput[] | BookingUncheckedCreateWithoutPublicationInput[]
+    connectOrCreate?: BookingCreateOrConnectWithoutPublicationInput | BookingCreateOrConnectWithoutPublicationInput[]
+    upsert?: BookingUpsertWithWhereUniqueWithoutPublicationInput | BookingUpsertWithWhereUniqueWithoutPublicationInput[]
+    createMany?: BookingCreateManyPublicationInputEnvelope
+    set?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
+    disconnect?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
+    delete?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
+    connect?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
+    update?: BookingUpdateWithWhereUniqueWithoutPublicationInput | BookingUpdateWithWhereUniqueWithoutPublicationInput[]
+    updateMany?: BookingUpdateManyWithWhereWithoutPublicationInput | BookingUpdateManyWithWhereWithoutPublicationInput[]
+    deleteMany?: BookingScalarWhereInput | BookingScalarWhereInput[]
+  }
+
+  export type PublicationCreateNestedOneWithoutBookingsInput = {
+    create?: XOR<PublicationCreateWithoutBookingsInput, PublicationUncheckedCreateWithoutBookingsInput>
+    connectOrCreate?: PublicationCreateOrConnectWithoutBookingsInput
+    connect?: PublicationWhereUniqueInput
   }
 
   export type ProfileCreateNestedOneWithoutBookingsInput = {
@@ -11685,12 +13297,14 @@ export namespace Prisma {
     connect?: ProfileWhereUniqueInput
   }
 
-  export type ServiceUpdateOneRequiredWithoutBookingsNestedInput = {
-    create?: XOR<ServiceCreateWithoutBookingsInput, ServiceUncheckedCreateWithoutBookingsInput>
-    connectOrCreate?: ServiceCreateOrConnectWithoutBookingsInput
-    upsert?: ServiceUpsertWithoutBookingsInput
-    connect?: ServiceWhereUniqueInput
-    update?: XOR<XOR<ServiceUpdateToOneWithWhereWithoutBookingsInput, ServiceUpdateWithoutBookingsInput>, ServiceUncheckedUpdateWithoutBookingsInput>
+  export type PublicationUpdateOneWithoutBookingsNestedInput = {
+    create?: XOR<PublicationCreateWithoutBookingsInput, PublicationUncheckedCreateWithoutBookingsInput>
+    connectOrCreate?: PublicationCreateOrConnectWithoutBookingsInput
+    upsert?: PublicationUpsertWithoutBookingsInput
+    disconnect?: PublicationWhereInput | boolean
+    delete?: PublicationWhereInput | boolean
+    connect?: PublicationWhereUniqueInput
+    update?: XOR<XOR<PublicationUpdateToOneWithWhereWithoutBookingsInput, PublicationUpdateWithoutBookingsInput>, PublicationUncheckedUpdateWithoutBookingsInput>
   }
 
   export type ProfileUpdateOneRequiredWithoutBookingsNestedInput = {
@@ -11879,20 +13493,61 @@ export namespace Prisma {
     _max?: NestedEnumRoleFilter<$PrismaModel>
   }
 
-  export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+  export type NestedDecimalNullableFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel> | null
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalNullableFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
+  }
+
+  export type NestedEnumPriceTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.PriceType | EnumPriceTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.PriceType[] | ListEnumPriceTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PriceType[] | ListEnumPriceTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumPriceTypeFilter<$PrismaModel> | $Enums.PriceType
+  }
+
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type NestedDecimalNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel> | null
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalNullableWithAggregatesFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
     _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedFloatNullableFilter<$PrismaModel>
-    _min?: NestedFloatNullableFilter<$PrismaModel>
-    _max?: NestedFloatNullableFilter<$PrismaModel>
+    _avg?: NestedDecimalNullableFilter<$PrismaModel>
+    _sum?: NestedDecimalNullableFilter<$PrismaModel>
+    _min?: NestedDecimalNullableFilter<$PrismaModel>
+    _max?: NestedDecimalNullableFilter<$PrismaModel>
+  }
+
+  export type NestedEnumPriceTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.PriceType | EnumPriceTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.PriceType[] | ListEnumPriceTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PriceType[] | ListEnumPriceTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumPriceTypeWithAggregatesFilter<$PrismaModel> | $Enums.PriceType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumPriceTypeFilter<$PrismaModel>
+    _max?: NestedEnumPriceTypeFilter<$PrismaModel>
+  }
+
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type UserCreateWithoutAccountsInput = {
@@ -12082,9 +13737,9 @@ export namespace Prisma {
     gallery?: ProfileCreategalleryInput | string[]
     createdAt?: Date | string
     updatedAt?: Date | string
-    servicesOffered?: ServiceCreateNestedManyWithoutProviderInput
-    servicesRequested?: ServiceCreateNestedManyWithoutRequesterInput
-    bookings?: BookingCreateNestedManyWithoutUserInput
+    servicesOffered?: ServiceCreateNestedManyWithoutProfilesOfferingInput
+    bookings?: BookingCreateNestedManyWithoutClientInput
+    publications?: PublicationCreateNestedManyWithoutProviderInput
   }
 
   export type ProfileUncheckedCreateWithoutUserInput = {
@@ -12102,9 +13757,9 @@ export namespace Prisma {
     gallery?: ProfileCreategalleryInput | string[]
     createdAt?: Date | string
     updatedAt?: Date | string
-    servicesOffered?: ServiceUncheckedCreateNestedManyWithoutProviderInput
-    servicesRequested?: ServiceUncheckedCreateNestedManyWithoutRequesterInput
-    bookings?: BookingUncheckedCreateNestedManyWithoutUserInput
+    servicesOffered?: ServiceUncheckedCreateNestedManyWithoutProfilesOfferingInput
+    bookings?: BookingUncheckedCreateNestedManyWithoutClientInput
+    publications?: PublicationUncheckedCreateNestedManyWithoutProviderInput
   }
 
   export type ProfileCreateOrConnectWithoutUserInput = {
@@ -12198,9 +13853,9 @@ export namespace Prisma {
     gallery?: ProfileUpdategalleryInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    servicesOffered?: ServiceUpdateManyWithoutProviderNestedInput
-    servicesRequested?: ServiceUpdateManyWithoutRequesterNestedInput
-    bookings?: BookingUpdateManyWithoutUserNestedInput
+    servicesOffered?: ServiceUpdateManyWithoutProfilesOfferingNestedInput
+    bookings?: BookingUpdateManyWithoutClientNestedInput
+    publications?: PublicationUpdateManyWithoutProviderNestedInput
   }
 
   export type ProfileUncheckedUpdateWithoutUserInput = {
@@ -12218,9 +13873,9 @@ export namespace Prisma {
     gallery?: ProfileUpdategalleryInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    servicesOffered?: ServiceUncheckedUpdateManyWithoutProviderNestedInput
-    servicesRequested?: ServiceUncheckedUpdateManyWithoutRequesterNestedInput
-    bookings?: BookingUncheckedUpdateManyWithoutUserNestedInput
+    servicesOffered?: ServiceUncheckedUpdateManyWithoutProfilesOfferingNestedInput
+    bookings?: BookingUncheckedUpdateManyWithoutClientNestedInput
+    publications?: PublicationUncheckedUpdateManyWithoutProviderNestedInput
   }
 
   export type UserCreateWithoutProfileInput = {
@@ -12248,105 +13903,94 @@ export namespace Prisma {
     create: XOR<UserCreateWithoutProfileInput, UserUncheckedCreateWithoutProfileInput>
   }
 
-  export type ServiceCreateWithoutProviderInput = {
+  export type ServiceCreateWithoutProfilesOfferingInput = {
     id?: string
     title: string
-    description: string
-    price?: number | null
-    category: string
-    imageUrl?: string | null
-    location?: string | null
+    description?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    requester?: ProfileCreateNestedOneWithoutServicesRequestedInput
-    bookings?: BookingCreateNestedManyWithoutServiceInput
+    publications?: PublicationCreateNestedManyWithoutServiceInput
   }
 
-  export type ServiceUncheckedCreateWithoutProviderInput = {
+  export type ServiceUncheckedCreateWithoutProfilesOfferingInput = {
     id?: string
     title: string
-    description: string
-    price?: number | null
-    category: string
-    imageUrl?: string | null
-    location?: string | null
-    requesterId?: string | null
+    description?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    bookings?: BookingUncheckedCreateNestedManyWithoutServiceInput
+    publications?: PublicationUncheckedCreateNestedManyWithoutServiceInput
   }
 
-  export type ServiceCreateOrConnectWithoutProviderInput = {
+  export type ServiceCreateOrConnectWithoutProfilesOfferingInput = {
     where: ServiceWhereUniqueInput
-    create: XOR<ServiceCreateWithoutProviderInput, ServiceUncheckedCreateWithoutProviderInput>
+    create: XOR<ServiceCreateWithoutProfilesOfferingInput, ServiceUncheckedCreateWithoutProfilesOfferingInput>
   }
 
-  export type ServiceCreateManyProviderInputEnvelope = {
-    data: ServiceCreateManyProviderInput | ServiceCreateManyProviderInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type ServiceCreateWithoutRequesterInput = {
-    id?: string
-    title: string
-    description: string
-    price?: number | null
-    category: string
-    imageUrl?: string | null
-    location?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    provider?: ProfileCreateNestedOneWithoutServicesOfferedInput
-    bookings?: BookingCreateNestedManyWithoutServiceInput
-  }
-
-  export type ServiceUncheckedCreateWithoutRequesterInput = {
-    id?: string
-    title: string
-    description: string
-    price?: number | null
-    category: string
-    imageUrl?: string | null
-    location?: string | null
-    providerId?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    bookings?: BookingUncheckedCreateNestedManyWithoutServiceInput
-  }
-
-  export type ServiceCreateOrConnectWithoutRequesterInput = {
-    where: ServiceWhereUniqueInput
-    create: XOR<ServiceCreateWithoutRequesterInput, ServiceUncheckedCreateWithoutRequesterInput>
-  }
-
-  export type ServiceCreateManyRequesterInputEnvelope = {
-    data: ServiceCreateManyRequesterInput | ServiceCreateManyRequesterInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type BookingCreateWithoutUserInput = {
+  export type BookingCreateWithoutClientInput = {
     id?: string
     date: Date | string
     status: string
     createdAt?: Date | string
-    service: ServiceCreateNestedOneWithoutBookingsInput
+    updatedAt?: Date | string
+    publication?: PublicationCreateNestedOneWithoutBookingsInput
   }
 
-  export type BookingUncheckedCreateWithoutUserInput = {
+  export type BookingUncheckedCreateWithoutClientInput = {
     id?: string
-    serviceId: string
+    publicationId?: string | null
     date: Date | string
     status: string
     createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
-  export type BookingCreateOrConnectWithoutUserInput = {
+  export type BookingCreateOrConnectWithoutClientInput = {
     where: BookingWhereUniqueInput
-    create: XOR<BookingCreateWithoutUserInput, BookingUncheckedCreateWithoutUserInput>
+    create: XOR<BookingCreateWithoutClientInput, BookingUncheckedCreateWithoutClientInput>
   }
 
-  export type BookingCreateManyUserInputEnvelope = {
-    data: BookingCreateManyUserInput | BookingCreateManyUserInput[]
+  export type BookingCreateManyClientInputEnvelope = {
+    data: BookingCreateManyClientInput | BookingCreateManyClientInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type PublicationCreateWithoutProviderInput = {
+    id?: string
+    title: string
+    description: string
+    price?: Decimal | DecimalJsLike | number | string | null
+    priceType: $Enums.PriceType
+    images?: PublicationCreateimagesInput | string[]
+    isActive?: boolean
+    isDeleted?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    service: ServiceCreateNestedOneWithoutPublicationsInput
+    bookings?: BookingCreateNestedManyWithoutPublicationInput
+  }
+
+  export type PublicationUncheckedCreateWithoutProviderInput = {
+    id?: string
+    title: string
+    description: string
+    price?: Decimal | DecimalJsLike | number | string | null
+    priceType: $Enums.PriceType
+    images?: PublicationCreateimagesInput | string[]
+    isActive?: boolean
+    isDeleted?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    serviceId: string
+    bookings?: BookingUncheckedCreateNestedManyWithoutPublicationInput
+  }
+
+  export type PublicationCreateOrConnectWithoutProviderInput = {
+    where: PublicationWhereUniqueInput
+    create: XOR<PublicationCreateWithoutProviderInput, PublicationUncheckedCreateWithoutProviderInput>
+  }
+
+  export type PublicationCreateManyProviderInputEnvelope = {
+    data: PublicationCreateManyProviderInput | PublicationCreateManyProviderInput[]
     skipDuplicates?: boolean
   }
 
@@ -12381,20 +14025,20 @@ export namespace Prisma {
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
   }
 
-  export type ServiceUpsertWithWhereUniqueWithoutProviderInput = {
+  export type ServiceUpsertWithWhereUniqueWithoutProfilesOfferingInput = {
     where: ServiceWhereUniqueInput
-    update: XOR<ServiceUpdateWithoutProviderInput, ServiceUncheckedUpdateWithoutProviderInput>
-    create: XOR<ServiceCreateWithoutProviderInput, ServiceUncheckedCreateWithoutProviderInput>
+    update: XOR<ServiceUpdateWithoutProfilesOfferingInput, ServiceUncheckedUpdateWithoutProfilesOfferingInput>
+    create: XOR<ServiceCreateWithoutProfilesOfferingInput, ServiceUncheckedCreateWithoutProfilesOfferingInput>
   }
 
-  export type ServiceUpdateWithWhereUniqueWithoutProviderInput = {
+  export type ServiceUpdateWithWhereUniqueWithoutProfilesOfferingInput = {
     where: ServiceWhereUniqueInput
-    data: XOR<ServiceUpdateWithoutProviderInput, ServiceUncheckedUpdateWithoutProviderInput>
+    data: XOR<ServiceUpdateWithoutProfilesOfferingInput, ServiceUncheckedUpdateWithoutProfilesOfferingInput>
   }
 
-  export type ServiceUpdateManyWithWhereWithoutProviderInput = {
+  export type ServiceUpdateManyWithWhereWithoutProfilesOfferingInput = {
     where: ServiceScalarWhereInput
-    data: XOR<ServiceUpdateManyMutationInput, ServiceUncheckedUpdateManyWithoutProviderInput>
+    data: XOR<ServiceUpdateManyMutationInput, ServiceUncheckedUpdateManyWithoutProfilesOfferingInput>
   }
 
   export type ServiceScalarWhereInput = {
@@ -12403,47 +14047,25 @@ export namespace Prisma {
     NOT?: ServiceScalarWhereInput | ServiceScalarWhereInput[]
     id?: StringFilter<"Service"> | string
     title?: StringFilter<"Service"> | string
-    description?: StringFilter<"Service"> | string
-    price?: FloatNullableFilter<"Service"> | number | null
-    category?: StringFilter<"Service"> | string
-    imageUrl?: StringNullableFilter<"Service"> | string | null
-    location?: StringNullableFilter<"Service"> | string | null
-    providerId?: StringNullableFilter<"Service"> | string | null
-    requesterId?: StringNullableFilter<"Service"> | string | null
+    description?: StringNullableFilter<"Service"> | string | null
     createdAt?: DateTimeFilter<"Service"> | Date | string
     updatedAt?: DateTimeFilter<"Service"> | Date | string
   }
 
-  export type ServiceUpsertWithWhereUniqueWithoutRequesterInput = {
-    where: ServiceWhereUniqueInput
-    update: XOR<ServiceUpdateWithoutRequesterInput, ServiceUncheckedUpdateWithoutRequesterInput>
-    create: XOR<ServiceCreateWithoutRequesterInput, ServiceUncheckedCreateWithoutRequesterInput>
-  }
-
-  export type ServiceUpdateWithWhereUniqueWithoutRequesterInput = {
-    where: ServiceWhereUniqueInput
-    data: XOR<ServiceUpdateWithoutRequesterInput, ServiceUncheckedUpdateWithoutRequesterInput>
-  }
-
-  export type ServiceUpdateManyWithWhereWithoutRequesterInput = {
-    where: ServiceScalarWhereInput
-    data: XOR<ServiceUpdateManyMutationInput, ServiceUncheckedUpdateManyWithoutRequesterInput>
-  }
-
-  export type BookingUpsertWithWhereUniqueWithoutUserInput = {
+  export type BookingUpsertWithWhereUniqueWithoutClientInput = {
     where: BookingWhereUniqueInput
-    update: XOR<BookingUpdateWithoutUserInput, BookingUncheckedUpdateWithoutUserInput>
-    create: XOR<BookingCreateWithoutUserInput, BookingUncheckedCreateWithoutUserInput>
+    update: XOR<BookingUpdateWithoutClientInput, BookingUncheckedUpdateWithoutClientInput>
+    create: XOR<BookingCreateWithoutClientInput, BookingUncheckedCreateWithoutClientInput>
   }
 
-  export type BookingUpdateWithWhereUniqueWithoutUserInput = {
+  export type BookingUpdateWithWhereUniqueWithoutClientInput = {
     where: BookingWhereUniqueInput
-    data: XOR<BookingUpdateWithoutUserInput, BookingUncheckedUpdateWithoutUserInput>
+    data: XOR<BookingUpdateWithoutClientInput, BookingUncheckedUpdateWithoutClientInput>
   }
 
-  export type BookingUpdateManyWithWhereWithoutUserInput = {
+  export type BookingUpdateManyWithWhereWithoutClientInput = {
     where: BookingScalarWhereInput
-    data: XOR<BookingUpdateManyMutationInput, BookingUncheckedUpdateManyWithoutUserInput>
+    data: XOR<BookingUpdateManyMutationInput, BookingUncheckedUpdateManyWithoutClientInput>
   }
 
   export type BookingScalarWhereInput = {
@@ -12451,11 +14073,46 @@ export namespace Prisma {
     OR?: BookingScalarWhereInput[]
     NOT?: BookingScalarWhereInput | BookingScalarWhereInput[]
     id?: StringFilter<"Booking"> | string
-    serviceId?: StringFilter<"Booking"> | string
-    userId?: StringFilter<"Booking"> | string
+    publicationId?: StringNullableFilter<"Booking"> | string | null
+    clientId?: StringFilter<"Booking"> | string
     date?: DateTimeFilter<"Booking"> | Date | string
     status?: StringFilter<"Booking"> | string
     createdAt?: DateTimeFilter<"Booking"> | Date | string
+    updatedAt?: DateTimeFilter<"Booking"> | Date | string
+  }
+
+  export type PublicationUpsertWithWhereUniqueWithoutProviderInput = {
+    where: PublicationWhereUniqueInput
+    update: XOR<PublicationUpdateWithoutProviderInput, PublicationUncheckedUpdateWithoutProviderInput>
+    create: XOR<PublicationCreateWithoutProviderInput, PublicationUncheckedCreateWithoutProviderInput>
+  }
+
+  export type PublicationUpdateWithWhereUniqueWithoutProviderInput = {
+    where: PublicationWhereUniqueInput
+    data: XOR<PublicationUpdateWithoutProviderInput, PublicationUncheckedUpdateWithoutProviderInput>
+  }
+
+  export type PublicationUpdateManyWithWhereWithoutProviderInput = {
+    where: PublicationScalarWhereInput
+    data: XOR<PublicationUpdateManyMutationInput, PublicationUncheckedUpdateManyWithoutProviderInput>
+  }
+
+  export type PublicationScalarWhereInput = {
+    AND?: PublicationScalarWhereInput | PublicationScalarWhereInput[]
+    OR?: PublicationScalarWhereInput[]
+    NOT?: PublicationScalarWhereInput | PublicationScalarWhereInput[]
+    id?: StringFilter<"Publication"> | string
+    title?: StringFilter<"Publication"> | string
+    description?: StringFilter<"Publication"> | string
+    price?: DecimalNullableFilter<"Publication"> | Decimal | DecimalJsLike | number | string | null
+    priceType?: EnumPriceTypeFilter<"Publication"> | $Enums.PriceType
+    images?: StringNullableListFilter<"Publication">
+    isActive?: BoolFilter<"Publication"> | boolean
+    isDeleted?: BoolFilter<"Publication"> | boolean
+    createdAt?: DateTimeFilter<"Publication"> | Date | string
+    updatedAt?: DateTimeFilter<"Publication"> | Date | string
+    providerId?: StringFilter<"Publication"> | string
+    serviceId?: StringFilter<"Publication"> | string
   }
 
   export type ProfileCreateWithoutServicesOfferedInput = {
@@ -12474,8 +14131,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutProfileInput
-    servicesRequested?: ServiceCreateNestedManyWithoutRequesterInput
-    bookings?: BookingCreateNestedManyWithoutUserInput
+    bookings?: BookingCreateNestedManyWithoutClientInput
+    publications?: PublicationCreateNestedManyWithoutProviderInput
   }
 
   export type ProfileUncheckedCreateWithoutServicesOfferedInput = {
@@ -12494,8 +14151,8 @@ export namespace Prisma {
     gallery?: ProfileCreategalleryInput | string[]
     createdAt?: Date | string
     updatedAt?: Date | string
-    servicesRequested?: ServiceUncheckedCreateNestedManyWithoutRequesterInput
-    bookings?: BookingUncheckedCreateNestedManyWithoutUserInput
+    bookings?: BookingUncheckedCreateNestedManyWithoutClientInput
+    publications?: PublicationUncheckedCreateNestedManyWithoutProviderInput
   }
 
   export type ProfileCreateOrConnectWithoutServicesOfferedInput = {
@@ -12503,7 +14160,100 @@ export namespace Prisma {
     create: XOR<ProfileCreateWithoutServicesOfferedInput, ProfileUncheckedCreateWithoutServicesOfferedInput>
   }
 
-  export type ProfileCreateWithoutServicesRequestedInput = {
+  export type PublicationCreateWithoutServiceInput = {
+    id?: string
+    title: string
+    description: string
+    price?: Decimal | DecimalJsLike | number | string | null
+    priceType: $Enums.PriceType
+    images?: PublicationCreateimagesInput | string[]
+    isActive?: boolean
+    isDeleted?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    provider: ProfileCreateNestedOneWithoutPublicationsInput
+    bookings?: BookingCreateNestedManyWithoutPublicationInput
+  }
+
+  export type PublicationUncheckedCreateWithoutServiceInput = {
+    id?: string
+    title: string
+    description: string
+    price?: Decimal | DecimalJsLike | number | string | null
+    priceType: $Enums.PriceType
+    images?: PublicationCreateimagesInput | string[]
+    isActive?: boolean
+    isDeleted?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    providerId: string
+    bookings?: BookingUncheckedCreateNestedManyWithoutPublicationInput
+  }
+
+  export type PublicationCreateOrConnectWithoutServiceInput = {
+    where: PublicationWhereUniqueInput
+    create: XOR<PublicationCreateWithoutServiceInput, PublicationUncheckedCreateWithoutServiceInput>
+  }
+
+  export type PublicationCreateManyServiceInputEnvelope = {
+    data: PublicationCreateManyServiceInput | PublicationCreateManyServiceInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ProfileUpsertWithWhereUniqueWithoutServicesOfferedInput = {
+    where: ProfileWhereUniqueInput
+    update: XOR<ProfileUpdateWithoutServicesOfferedInput, ProfileUncheckedUpdateWithoutServicesOfferedInput>
+    create: XOR<ProfileCreateWithoutServicesOfferedInput, ProfileUncheckedCreateWithoutServicesOfferedInput>
+  }
+
+  export type ProfileUpdateWithWhereUniqueWithoutServicesOfferedInput = {
+    where: ProfileWhereUniqueInput
+    data: XOR<ProfileUpdateWithoutServicesOfferedInput, ProfileUncheckedUpdateWithoutServicesOfferedInput>
+  }
+
+  export type ProfileUpdateManyWithWhereWithoutServicesOfferedInput = {
+    where: ProfileScalarWhereInput
+    data: XOR<ProfileUpdateManyMutationInput, ProfileUncheckedUpdateManyWithoutServicesOfferedInput>
+  }
+
+  export type ProfileScalarWhereInput = {
+    AND?: ProfileScalarWhereInput | ProfileScalarWhereInput[]
+    OR?: ProfileScalarWhereInput[]
+    NOT?: ProfileScalarWhereInput | ProfileScalarWhereInput[]
+    id?: StringFilter<"Profile"> | string
+    authUserId?: StringFilter<"Profile"> | string
+    email?: StringFilter<"Profile"> | string
+    role?: EnumRoleFilter<"Profile"> | $Enums.Role
+    fullName?: StringNullableFilter<"Profile"> | string | null
+    phoneNumber?: StringNullableFilter<"Profile"> | string | null
+    profileImage?: StringNullableFilter<"Profile"> | string | null
+    location?: StringNullableFilter<"Profile"> | string | null
+    bio?: StringNullableFilter<"Profile"> | string | null
+    idFront?: StringNullableFilter<"Profile"> | string | null
+    idBack?: StringNullableFilter<"Profile"> | string | null
+    birthDate?: DateTimeNullableFilter<"Profile"> | Date | string | null
+    gallery?: StringNullableListFilter<"Profile">
+    createdAt?: DateTimeFilter<"Profile"> | Date | string
+    updatedAt?: DateTimeFilter<"Profile"> | Date | string
+  }
+
+  export type PublicationUpsertWithWhereUniqueWithoutServiceInput = {
+    where: PublicationWhereUniqueInput
+    update: XOR<PublicationUpdateWithoutServiceInput, PublicationUncheckedUpdateWithoutServiceInput>
+    create: XOR<PublicationCreateWithoutServiceInput, PublicationUncheckedCreateWithoutServiceInput>
+  }
+
+  export type PublicationUpdateWithWhereUniqueWithoutServiceInput = {
+    where: PublicationWhereUniqueInput
+    data: XOR<PublicationUpdateWithoutServiceInput, PublicationUncheckedUpdateWithoutServiceInput>
+  }
+
+  export type PublicationUpdateManyWithWhereWithoutServiceInput = {
+    where: PublicationScalarWhereInput
+    data: XOR<PublicationUpdateManyMutationInput, PublicationUncheckedUpdateManyWithoutServiceInput>
+  }
+
+  export type ProfileCreateWithoutPublicationsInput = {
     id?: string
     email: string
     role?: $Enums.Role
@@ -12519,11 +14269,11 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutProfileInput
-    servicesOffered?: ServiceCreateNestedManyWithoutProviderInput
-    bookings?: BookingCreateNestedManyWithoutUserInput
+    servicesOffered?: ServiceCreateNestedManyWithoutProfilesOfferingInput
+    bookings?: BookingCreateNestedManyWithoutClientInput
   }
 
-  export type ProfileUncheckedCreateWithoutServicesRequestedInput = {
+  export type ProfileUncheckedCreateWithoutPublicationsInput = {
     id?: string
     authUserId: string
     email: string
@@ -12539,53 +14289,78 @@ export namespace Prisma {
     gallery?: ProfileCreategalleryInput | string[]
     createdAt?: Date | string
     updatedAt?: Date | string
-    servicesOffered?: ServiceUncheckedCreateNestedManyWithoutProviderInput
-    bookings?: BookingUncheckedCreateNestedManyWithoutUserInput
+    servicesOffered?: ServiceUncheckedCreateNestedManyWithoutProfilesOfferingInput
+    bookings?: BookingUncheckedCreateNestedManyWithoutClientInput
   }
 
-  export type ProfileCreateOrConnectWithoutServicesRequestedInput = {
+  export type ProfileCreateOrConnectWithoutPublicationsInput = {
     where: ProfileWhereUniqueInput
-    create: XOR<ProfileCreateWithoutServicesRequestedInput, ProfileUncheckedCreateWithoutServicesRequestedInput>
+    create: XOR<ProfileCreateWithoutPublicationsInput, ProfileUncheckedCreateWithoutPublicationsInput>
   }
 
-  export type BookingCreateWithoutServiceInput = {
+  export type ServiceCreateWithoutPublicationsInput = {
+    id?: string
+    title: string
+    description?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    profilesOffering?: ProfileCreateNestedManyWithoutServicesOfferedInput
+  }
+
+  export type ServiceUncheckedCreateWithoutPublicationsInput = {
+    id?: string
+    title: string
+    description?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    profilesOffering?: ProfileUncheckedCreateNestedManyWithoutServicesOfferedInput
+  }
+
+  export type ServiceCreateOrConnectWithoutPublicationsInput = {
+    where: ServiceWhereUniqueInput
+    create: XOR<ServiceCreateWithoutPublicationsInput, ServiceUncheckedCreateWithoutPublicationsInput>
+  }
+
+  export type BookingCreateWithoutPublicationInput = {
     id?: string
     date: Date | string
     status: string
     createdAt?: Date | string
-    user: ProfileCreateNestedOneWithoutBookingsInput
+    updatedAt?: Date | string
+    client: ProfileCreateNestedOneWithoutBookingsInput
   }
 
-  export type BookingUncheckedCreateWithoutServiceInput = {
+  export type BookingUncheckedCreateWithoutPublicationInput = {
     id?: string
-    userId: string
+    clientId: string
     date: Date | string
     status: string
     createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
-  export type BookingCreateOrConnectWithoutServiceInput = {
+  export type BookingCreateOrConnectWithoutPublicationInput = {
     where: BookingWhereUniqueInput
-    create: XOR<BookingCreateWithoutServiceInput, BookingUncheckedCreateWithoutServiceInput>
+    create: XOR<BookingCreateWithoutPublicationInput, BookingUncheckedCreateWithoutPublicationInput>
   }
 
-  export type BookingCreateManyServiceInputEnvelope = {
-    data: BookingCreateManyServiceInput | BookingCreateManyServiceInput[]
+  export type BookingCreateManyPublicationInputEnvelope = {
+    data: BookingCreateManyPublicationInput | BookingCreateManyPublicationInput[]
     skipDuplicates?: boolean
   }
 
-  export type ProfileUpsertWithoutServicesOfferedInput = {
-    update: XOR<ProfileUpdateWithoutServicesOfferedInput, ProfileUncheckedUpdateWithoutServicesOfferedInput>
-    create: XOR<ProfileCreateWithoutServicesOfferedInput, ProfileUncheckedCreateWithoutServicesOfferedInput>
+  export type ProfileUpsertWithoutPublicationsInput = {
+    update: XOR<ProfileUpdateWithoutPublicationsInput, ProfileUncheckedUpdateWithoutPublicationsInput>
+    create: XOR<ProfileCreateWithoutPublicationsInput, ProfileUncheckedCreateWithoutPublicationsInput>
     where?: ProfileWhereInput
   }
 
-  export type ProfileUpdateToOneWithWhereWithoutServicesOfferedInput = {
+  export type ProfileUpdateToOneWithWhereWithoutPublicationsInput = {
     where?: ProfileWhereInput
-    data: XOR<ProfileUpdateWithoutServicesOfferedInput, ProfileUncheckedUpdateWithoutServicesOfferedInput>
+    data: XOR<ProfileUpdateWithoutPublicationsInput, ProfileUncheckedUpdateWithoutPublicationsInput>
   }
 
-  export type ProfileUpdateWithoutServicesOfferedInput = {
+  export type ProfileUpdateWithoutPublicationsInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
@@ -12601,11 +14376,11 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutProfileNestedInput
-    servicesRequested?: ServiceUpdateManyWithoutRequesterNestedInput
-    bookings?: BookingUpdateManyWithoutUserNestedInput
+    servicesOffered?: ServiceUpdateManyWithoutProfilesOfferingNestedInput
+    bookings?: BookingUpdateManyWithoutClientNestedInput
   }
 
-  export type ProfileUncheckedUpdateWithoutServicesOfferedInput = {
+  export type ProfileUncheckedUpdateWithoutPublicationsInput = {
     id?: StringFieldUpdateOperationsInput | string
     authUserId?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
@@ -12621,108 +14396,88 @@ export namespace Prisma {
     gallery?: ProfileUpdategalleryInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    servicesRequested?: ServiceUncheckedUpdateManyWithoutRequesterNestedInput
-    bookings?: BookingUncheckedUpdateManyWithoutUserNestedInput
+    servicesOffered?: ServiceUncheckedUpdateManyWithoutProfilesOfferingNestedInput
+    bookings?: BookingUncheckedUpdateManyWithoutClientNestedInput
   }
 
-  export type ProfileUpsertWithoutServicesRequestedInput = {
-    update: XOR<ProfileUpdateWithoutServicesRequestedInput, ProfileUncheckedUpdateWithoutServicesRequestedInput>
-    create: XOR<ProfileCreateWithoutServicesRequestedInput, ProfileUncheckedCreateWithoutServicesRequestedInput>
-    where?: ProfileWhereInput
+  export type ServiceUpsertWithoutPublicationsInput = {
+    update: XOR<ServiceUpdateWithoutPublicationsInput, ServiceUncheckedUpdateWithoutPublicationsInput>
+    create: XOR<ServiceCreateWithoutPublicationsInput, ServiceUncheckedCreateWithoutPublicationsInput>
+    where?: ServiceWhereInput
   }
 
-  export type ProfileUpdateToOneWithWhereWithoutServicesRequestedInput = {
-    where?: ProfileWhereInput
-    data: XOR<ProfileUpdateWithoutServicesRequestedInput, ProfileUncheckedUpdateWithoutServicesRequestedInput>
+  export type ServiceUpdateToOneWithWhereWithoutPublicationsInput = {
+    where?: ServiceWhereInput
+    data: XOR<ServiceUpdateWithoutPublicationsInput, ServiceUncheckedUpdateWithoutPublicationsInput>
   }
 
-  export type ProfileUpdateWithoutServicesRequestedInput = {
+  export type ServiceUpdateWithoutPublicationsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    fullName?: NullableStringFieldUpdateOperationsInput | string | null
-    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
-    location?: NullableStringFieldUpdateOperationsInput | string | null
-    bio?: NullableStringFieldUpdateOperationsInput | string | null
-    idFront?: NullableStringFieldUpdateOperationsInput | string | null
-    idBack?: NullableStringFieldUpdateOperationsInput | string | null
-    birthDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    gallery?: ProfileUpdategalleryInput | string[]
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    user?: UserUpdateOneRequiredWithoutProfileNestedInput
-    servicesOffered?: ServiceUpdateManyWithoutProviderNestedInput
-    bookings?: BookingUpdateManyWithoutUserNestedInput
+    profilesOffering?: ProfileUpdateManyWithoutServicesOfferedNestedInput
   }
 
-  export type ProfileUncheckedUpdateWithoutServicesRequestedInput = {
+  export type ServiceUncheckedUpdateWithoutPublicationsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    authUserId?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    fullName?: NullableStringFieldUpdateOperationsInput | string | null
-    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
-    location?: NullableStringFieldUpdateOperationsInput | string | null
-    bio?: NullableStringFieldUpdateOperationsInput | string | null
-    idFront?: NullableStringFieldUpdateOperationsInput | string | null
-    idBack?: NullableStringFieldUpdateOperationsInput | string | null
-    birthDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    gallery?: ProfileUpdategalleryInput | string[]
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    servicesOffered?: ServiceUncheckedUpdateManyWithoutProviderNestedInput
-    bookings?: BookingUncheckedUpdateManyWithoutUserNestedInput
+    profilesOffering?: ProfileUncheckedUpdateManyWithoutServicesOfferedNestedInput
   }
 
-  export type BookingUpsertWithWhereUniqueWithoutServiceInput = {
+  export type BookingUpsertWithWhereUniqueWithoutPublicationInput = {
     where: BookingWhereUniqueInput
-    update: XOR<BookingUpdateWithoutServiceInput, BookingUncheckedUpdateWithoutServiceInput>
-    create: XOR<BookingCreateWithoutServiceInput, BookingUncheckedCreateWithoutServiceInput>
+    update: XOR<BookingUpdateWithoutPublicationInput, BookingUncheckedUpdateWithoutPublicationInput>
+    create: XOR<BookingCreateWithoutPublicationInput, BookingUncheckedCreateWithoutPublicationInput>
   }
 
-  export type BookingUpdateWithWhereUniqueWithoutServiceInput = {
+  export type BookingUpdateWithWhereUniqueWithoutPublicationInput = {
     where: BookingWhereUniqueInput
-    data: XOR<BookingUpdateWithoutServiceInput, BookingUncheckedUpdateWithoutServiceInput>
+    data: XOR<BookingUpdateWithoutPublicationInput, BookingUncheckedUpdateWithoutPublicationInput>
   }
 
-  export type BookingUpdateManyWithWhereWithoutServiceInput = {
+  export type BookingUpdateManyWithWhereWithoutPublicationInput = {
     where: BookingScalarWhereInput
-    data: XOR<BookingUpdateManyMutationInput, BookingUncheckedUpdateManyWithoutServiceInput>
+    data: XOR<BookingUpdateManyMutationInput, BookingUncheckedUpdateManyWithoutPublicationInput>
   }
 
-  export type ServiceCreateWithoutBookingsInput = {
+  export type PublicationCreateWithoutBookingsInput = {
     id?: string
     title: string
     description: string
-    price?: number | null
-    category: string
-    imageUrl?: string | null
-    location?: string | null
+    price?: Decimal | DecimalJsLike | number | string | null
+    priceType: $Enums.PriceType
+    images?: PublicationCreateimagesInput | string[]
+    isActive?: boolean
+    isDeleted?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
-    provider?: ProfileCreateNestedOneWithoutServicesOfferedInput
-    requester?: ProfileCreateNestedOneWithoutServicesRequestedInput
+    provider: ProfileCreateNestedOneWithoutPublicationsInput
+    service: ServiceCreateNestedOneWithoutPublicationsInput
   }
 
-  export type ServiceUncheckedCreateWithoutBookingsInput = {
+  export type PublicationUncheckedCreateWithoutBookingsInput = {
     id?: string
     title: string
     description: string
-    price?: number | null
-    category: string
-    imageUrl?: string | null
-    location?: string | null
-    providerId?: string | null
-    requesterId?: string | null
+    price?: Decimal | DecimalJsLike | number | string | null
+    priceType: $Enums.PriceType
+    images?: PublicationCreateimagesInput | string[]
+    isActive?: boolean
+    isDeleted?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    providerId: string
+    serviceId: string
   }
 
-  export type ServiceCreateOrConnectWithoutBookingsInput = {
-    where: ServiceWhereUniqueInput
-    create: XOR<ServiceCreateWithoutBookingsInput, ServiceUncheckedCreateWithoutBookingsInput>
+  export type PublicationCreateOrConnectWithoutBookingsInput = {
+    where: PublicationWhereUniqueInput
+    create: XOR<PublicationCreateWithoutBookingsInput, PublicationUncheckedCreateWithoutBookingsInput>
   }
 
   export type ProfileCreateWithoutBookingsInput = {
@@ -12741,8 +14496,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutProfileInput
-    servicesOffered?: ServiceCreateNestedManyWithoutProviderInput
-    servicesRequested?: ServiceCreateNestedManyWithoutRequesterInput
+    servicesOffered?: ServiceCreateNestedManyWithoutProfilesOfferingInput
+    publications?: PublicationCreateNestedManyWithoutProviderInput
   }
 
   export type ProfileUncheckedCreateWithoutBookingsInput = {
@@ -12761,8 +14516,8 @@ export namespace Prisma {
     gallery?: ProfileCreategalleryInput | string[]
     createdAt?: Date | string
     updatedAt?: Date | string
-    servicesOffered?: ServiceUncheckedCreateNestedManyWithoutProviderInput
-    servicesRequested?: ServiceUncheckedCreateNestedManyWithoutRequesterInput
+    servicesOffered?: ServiceUncheckedCreateNestedManyWithoutProfilesOfferingInput
+    publications?: PublicationUncheckedCreateNestedManyWithoutProviderInput
   }
 
   export type ProfileCreateOrConnectWithoutBookingsInput = {
@@ -12770,43 +14525,45 @@ export namespace Prisma {
     create: XOR<ProfileCreateWithoutBookingsInput, ProfileUncheckedCreateWithoutBookingsInput>
   }
 
-  export type ServiceUpsertWithoutBookingsInput = {
-    update: XOR<ServiceUpdateWithoutBookingsInput, ServiceUncheckedUpdateWithoutBookingsInput>
-    create: XOR<ServiceCreateWithoutBookingsInput, ServiceUncheckedCreateWithoutBookingsInput>
-    where?: ServiceWhereInput
+  export type PublicationUpsertWithoutBookingsInput = {
+    update: XOR<PublicationUpdateWithoutBookingsInput, PublicationUncheckedUpdateWithoutBookingsInput>
+    create: XOR<PublicationCreateWithoutBookingsInput, PublicationUncheckedCreateWithoutBookingsInput>
+    where?: PublicationWhereInput
   }
 
-  export type ServiceUpdateToOneWithWhereWithoutBookingsInput = {
-    where?: ServiceWhereInput
-    data: XOR<ServiceUpdateWithoutBookingsInput, ServiceUncheckedUpdateWithoutBookingsInput>
+  export type PublicationUpdateToOneWithWhereWithoutBookingsInput = {
+    where?: PublicationWhereInput
+    data: XOR<PublicationUpdateWithoutBookingsInput, PublicationUncheckedUpdateWithoutBookingsInput>
   }
 
-  export type ServiceUpdateWithoutBookingsInput = {
+  export type PublicationUpdateWithoutBookingsInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
-    price?: NullableFloatFieldUpdateOperationsInput | number | null
-    category?: StringFieldUpdateOperationsInput | string
-    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    location?: NullableStringFieldUpdateOperationsInput | string | null
+    price?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    priceType?: EnumPriceTypeFieldUpdateOperationsInput | $Enums.PriceType
+    images?: PublicationUpdateimagesInput | string[]
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    provider?: ProfileUpdateOneWithoutServicesOfferedNestedInput
-    requester?: ProfileUpdateOneWithoutServicesRequestedNestedInput
+    provider?: ProfileUpdateOneRequiredWithoutPublicationsNestedInput
+    service?: ServiceUpdateOneRequiredWithoutPublicationsNestedInput
   }
 
-  export type ServiceUncheckedUpdateWithoutBookingsInput = {
+  export type PublicationUncheckedUpdateWithoutBookingsInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
-    price?: NullableFloatFieldUpdateOperationsInput | number | null
-    category?: StringFieldUpdateOperationsInput | string
-    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    location?: NullableStringFieldUpdateOperationsInput | string | null
-    providerId?: NullableStringFieldUpdateOperationsInput | string | null
-    requesterId?: NullableStringFieldUpdateOperationsInput | string | null
+    price?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    priceType?: EnumPriceTypeFieldUpdateOperationsInput | $Enums.PriceType
+    images?: PublicationUpdateimagesInput | string[]
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    providerId?: StringFieldUpdateOperationsInput | string
+    serviceId?: StringFieldUpdateOperationsInput | string
   }
 
   export type ProfileUpsertWithoutBookingsInput = {
@@ -12836,8 +14593,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutProfileNestedInput
-    servicesOffered?: ServiceUpdateManyWithoutProviderNestedInput
-    servicesRequested?: ServiceUpdateManyWithoutRequesterNestedInput
+    servicesOffered?: ServiceUpdateManyWithoutProfilesOfferingNestedInput
+    publications?: PublicationUpdateManyWithoutProviderNestedInput
   }
 
   export type ProfileUncheckedUpdateWithoutBookingsInput = {
@@ -12856,8 +14613,8 @@ export namespace Prisma {
     gallery?: ProfileUpdategalleryInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    servicesOffered?: ServiceUncheckedUpdateManyWithoutProviderNestedInput
-    servicesRequested?: ServiceUncheckedUpdateManyWithoutRequesterNestedInput
+    servicesOffered?: ServiceUncheckedUpdateManyWithoutProfilesOfferingNestedInput
+    publications?: PublicationUncheckedUpdateManyWithoutProviderNestedInput
   }
 
   export type AccountCreateManyUserInput = {
@@ -12940,176 +14697,276 @@ export namespace Prisma {
     expires?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type ServiceCreateManyProviderInput = {
+  export type BookingCreateManyClientInput = {
     id?: string
-    title: string
-    description: string
-    price?: number | null
-    category: string
-    imageUrl?: string | null
-    location?: string | null
-    requesterId?: string | null
+    publicationId?: string | null
+    date: Date | string
+    status: string
     createdAt?: Date | string
     updatedAt?: Date | string
   }
 
-  export type ServiceCreateManyRequesterInput = {
+  export type PublicationCreateManyProviderInput = {
     id?: string
     title: string
     description: string
-    price?: number | null
-    category: string
-    imageUrl?: string | null
-    location?: string | null
-    providerId?: string | null
+    price?: Decimal | DecimalJsLike | number | string | null
+    priceType: $Enums.PriceType
+    images?: PublicationCreateimagesInput | string[]
+    isActive?: boolean
+    isDeleted?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
-  }
-
-  export type BookingCreateManyUserInput = {
-    id?: string
     serviceId: string
-    date: Date | string
-    status: string
-    createdAt?: Date | string
   }
 
-  export type ServiceUpdateWithoutProviderInput = {
+  export type ServiceUpdateWithoutProfilesOfferingInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    description?: StringFieldUpdateOperationsInput | string
-    price?: NullableFloatFieldUpdateOperationsInput | number | null
-    category?: StringFieldUpdateOperationsInput | string
-    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    location?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    requester?: ProfileUpdateOneWithoutServicesRequestedNestedInput
-    bookings?: BookingUpdateManyWithoutServiceNestedInput
+    publications?: PublicationUpdateManyWithoutServiceNestedInput
   }
 
-  export type ServiceUncheckedUpdateWithoutProviderInput = {
+  export type ServiceUncheckedUpdateWithoutProfilesOfferingInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    description?: StringFieldUpdateOperationsInput | string
-    price?: NullableFloatFieldUpdateOperationsInput | number | null
-    category?: StringFieldUpdateOperationsInput | string
-    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    location?: NullableStringFieldUpdateOperationsInput | string | null
-    requesterId?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    bookings?: BookingUncheckedUpdateManyWithoutServiceNestedInput
+    publications?: PublicationUncheckedUpdateManyWithoutServiceNestedInput
   }
 
-  export type ServiceUncheckedUpdateManyWithoutProviderInput = {
+  export type ServiceUncheckedUpdateManyWithoutProfilesOfferingInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    description?: StringFieldUpdateOperationsInput | string
-    price?: NullableFloatFieldUpdateOperationsInput | number | null
-    category?: StringFieldUpdateOperationsInput | string
-    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    location?: NullableStringFieldUpdateOperationsInput | string | null
-    requesterId?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type ServiceUpdateWithoutRequesterInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    description?: StringFieldUpdateOperationsInput | string
-    price?: NullableFloatFieldUpdateOperationsInput | number | null
-    category?: StringFieldUpdateOperationsInput | string
-    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    location?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    provider?: ProfileUpdateOneWithoutServicesOfferedNestedInput
-    bookings?: BookingUpdateManyWithoutServiceNestedInput
-  }
-
-  export type ServiceUncheckedUpdateWithoutRequesterInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    description?: StringFieldUpdateOperationsInput | string
-    price?: NullableFloatFieldUpdateOperationsInput | number | null
-    category?: StringFieldUpdateOperationsInput | string
-    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    location?: NullableStringFieldUpdateOperationsInput | string | null
-    providerId?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    bookings?: BookingUncheckedUpdateManyWithoutServiceNestedInput
-  }
-
-  export type ServiceUncheckedUpdateManyWithoutRequesterInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    description?: StringFieldUpdateOperationsInput | string
-    price?: NullableFloatFieldUpdateOperationsInput | number | null
-    category?: StringFieldUpdateOperationsInput | string
-    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    location?: NullableStringFieldUpdateOperationsInput | string | null
-    providerId?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type BookingUpdateWithoutUserInput = {
+  export type BookingUpdateWithoutClientInput = {
     id?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    service?: ServiceUpdateOneRequiredWithoutBookingsNestedInput
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    publication?: PublicationUpdateOneWithoutBookingsNestedInput
   }
 
-  export type BookingUncheckedUpdateWithoutUserInput = {
+  export type BookingUncheckedUpdateWithoutClientInput = {
     id?: StringFieldUpdateOperationsInput | string
+    publicationId?: NullableStringFieldUpdateOperationsInput | string | null
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BookingUncheckedUpdateManyWithoutClientInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    publicationId?: NullableStringFieldUpdateOperationsInput | string | null
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PublicationUpdateWithoutProviderInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    price?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    priceType?: EnumPriceTypeFieldUpdateOperationsInput | $Enums.PriceType
+    images?: PublicationUpdateimagesInput | string[]
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    service?: ServiceUpdateOneRequiredWithoutPublicationsNestedInput
+    bookings?: BookingUpdateManyWithoutPublicationNestedInput
+  }
+
+  export type PublicationUncheckedUpdateWithoutProviderInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    price?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    priceType?: EnumPriceTypeFieldUpdateOperationsInput | $Enums.PriceType
+    images?: PublicationUpdateimagesInput | string[]
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     serviceId?: StringFieldUpdateOperationsInput | string
-    date?: DateTimeFieldUpdateOperationsInput | Date | string
-    status?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    bookings?: BookingUncheckedUpdateManyWithoutPublicationNestedInput
   }
 
-  export type BookingUncheckedUpdateManyWithoutUserInput = {
+  export type PublicationUncheckedUpdateManyWithoutProviderInput = {
     id?: StringFieldUpdateOperationsInput | string
-    serviceId?: StringFieldUpdateOperationsInput | string
-    date?: DateTimeFieldUpdateOperationsInput | Date | string
-    status?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    price?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    priceType?: EnumPriceTypeFieldUpdateOperationsInput | $Enums.PriceType
+    images?: PublicationUpdateimagesInput | string[]
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    serviceId?: StringFieldUpdateOperationsInput | string
   }
 
-  export type BookingCreateManyServiceInput = {
+  export type PublicationCreateManyServiceInput = {
     id?: string
-    userId: string
+    title: string
+    description: string
+    price?: Decimal | DecimalJsLike | number | string | null
+    priceType: $Enums.PriceType
+    images?: PublicationCreateimagesInput | string[]
+    isActive?: boolean
+    isDeleted?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    providerId: string
+  }
+
+  export type ProfileUpdateWithoutServicesOfferedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    fullName?: NullableStringFieldUpdateOperationsInput | string | null
+    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    idFront?: NullableStringFieldUpdateOperationsInput | string | null
+    idBack?: NullableStringFieldUpdateOperationsInput | string | null
+    birthDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    gallery?: ProfileUpdategalleryInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutProfileNestedInput
+    bookings?: BookingUpdateManyWithoutClientNestedInput
+    publications?: PublicationUpdateManyWithoutProviderNestedInput
+  }
+
+  export type ProfileUncheckedUpdateWithoutServicesOfferedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    authUserId?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    fullName?: NullableStringFieldUpdateOperationsInput | string | null
+    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    idFront?: NullableStringFieldUpdateOperationsInput | string | null
+    idBack?: NullableStringFieldUpdateOperationsInput | string | null
+    birthDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    gallery?: ProfileUpdategalleryInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    bookings?: BookingUncheckedUpdateManyWithoutClientNestedInput
+    publications?: PublicationUncheckedUpdateManyWithoutProviderNestedInput
+  }
+
+  export type ProfileUncheckedUpdateManyWithoutServicesOfferedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    authUserId?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    fullName?: NullableStringFieldUpdateOperationsInput | string | null
+    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    idFront?: NullableStringFieldUpdateOperationsInput | string | null
+    idBack?: NullableStringFieldUpdateOperationsInput | string | null
+    birthDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    gallery?: ProfileUpdategalleryInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PublicationUpdateWithoutServiceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    price?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    priceType?: EnumPriceTypeFieldUpdateOperationsInput | $Enums.PriceType
+    images?: PublicationUpdateimagesInput | string[]
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    provider?: ProfileUpdateOneRequiredWithoutPublicationsNestedInput
+    bookings?: BookingUpdateManyWithoutPublicationNestedInput
+  }
+
+  export type PublicationUncheckedUpdateWithoutServiceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    price?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    priceType?: EnumPriceTypeFieldUpdateOperationsInput | $Enums.PriceType
+    images?: PublicationUpdateimagesInput | string[]
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    providerId?: StringFieldUpdateOperationsInput | string
+    bookings?: BookingUncheckedUpdateManyWithoutPublicationNestedInput
+  }
+
+  export type PublicationUncheckedUpdateManyWithoutServiceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    price?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    priceType?: EnumPriceTypeFieldUpdateOperationsInput | $Enums.PriceType
+    images?: PublicationUpdateimagesInput | string[]
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    providerId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type BookingCreateManyPublicationInput = {
+    id?: string
+    clientId: string
     date: Date | string
     status: string
     createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
-  export type BookingUpdateWithoutServiceInput = {
+  export type BookingUpdateWithoutPublicationInput = {
     id?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    user?: ProfileUpdateOneRequiredWithoutBookingsNestedInput
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    client?: ProfileUpdateOneRequiredWithoutBookingsNestedInput
   }
 
-  export type BookingUncheckedUpdateWithoutServiceInput = {
+  export type BookingUncheckedUpdateWithoutPublicationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
+    clientId?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type BookingUncheckedUpdateManyWithoutServiceInput = {
+  export type BookingUncheckedUpdateManyWithoutPublicationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
+    clientId?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
 

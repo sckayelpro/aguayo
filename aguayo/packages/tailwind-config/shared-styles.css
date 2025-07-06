@@ -1,19 +1,20 @@
-@import 'tailwindcss';
-@import '@repo/tailwind-config';
-@import '@repo/ui/styles.css';
+/* aguayo/packages/tailwind-config/shared-styles.css */
 
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
 
 /* Definición de tokens usando @theme en Tailwind CSS v4 */
 @theme {
-  --color-primary: #00ffff;         /* Naranja Aguayo */
+  --color-primary: #00ffff;           /* Cian (como tu #00ffff) */
   --color-primary-dark: oklch(0.45 0.12 230);   /* Azul oscuro */
-  --color-accent: oklch(0.82 0.09 210);         /* Azul claro */
-  --color-info: oklch(0.9 0.04 220);            /* Celeste informativo */
+  --color-accent: oklch(0.82 0.09 210);        /* Azul claro */
+  --color-info: oklch(0.9 0.04 220);           /* Celeste informativo */
   --color-warning: oklch(0.85 0.09 80);         /* Amarillo pastel */
-  --color-danger: oklch(0.72 0.11 25);          /* Rojo tierra */
+  --color-danger: oklch(0.72 0.11 25);         /* Rojo tierra */
 
   --color-bg-light: oklch(0.98 0.005 270);      /* Fondo claro */
-  --color-surface: oklch(1 0 0);                /* Blanco puro */
+  --color-surface: oklch(1 0 0);               /* Blanco puro */
   --color-surface-2: oklch(0.9 0.03 20);        /* Rosado claro */
   --color-neutral-500: oklch(0.6 0.01 260);     /* Gris medio */
 
@@ -28,11 +29,12 @@
                "Segoe UI Symbol", "Noto Color Emoji";
 }
 
-/* Variables CSS para acceso manual desde estilos */
+/* Variables CSS para acceso manual desde estilos (opcional, pero útil para temas) */
 :root {
   --background: var(--color-bg-light);
   --foreground: var(--color-neutral-500);
 }
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: var(--color-neutral-500);

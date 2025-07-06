@@ -1,3 +1,4 @@
+// aguayo/packages/ui/tsconfig.json
 {
   "extends": "@repo/typescript-config/react-library.json",
   "compilerOptions": {
